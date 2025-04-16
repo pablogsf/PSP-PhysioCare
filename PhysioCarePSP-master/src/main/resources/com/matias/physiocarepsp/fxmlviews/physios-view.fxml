@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="850.0" spacing="15.0"
+      xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.matias.physiocarepsp.viewscontroller.PhysiosViewController">
+    <padding>
+        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+    </padding>
+    <children>
+        <HBox alignment="CENTER" prefHeight="40.0" spacing="10.0">
+            <children>
+                <Label text="PHYSIOS MANAGEMENT" alignment="CENTER">
+                    <font>
+                        <Font size="28.0"/>
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+        <HBox spacing="10.0" VBox.vgrow="ALWAYS">
+            <children>
+                <VBox minWidth="200.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                    <padding>
+                        <Insets top="10.0" right="10.0" bottom="10.0" left="10.0"/>
+                    </padding>
+                    <children>
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <children>
+                                <Label text="Physios">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                                <Region HBox.hgrow="ALWAYS"/>
+                                <TextField fx:id="txtSearch" prefHeight="30.0" promptText="Search physio...">
+                                    <font>
+                                        <Font size="14.0"/>
+                                    </font>
+                                </TextField>
+                            </children>
+                        </HBox>
+                        <ListView fx:id="lsPhysios" VBox.vgrow="ALWAYS"/>
+                    </children>
+                </VBox>
+                <VBox minWidth="300.0" spacing="15.0" HBox.hgrow="ALWAYS">
+                    <padding>
+                        <Insets top="15.0" right="15.0" bottom="15.0" left="15.0"/>
+                    </padding>
+                    <children>
+                        <Label text="Physio Information" prefHeight="27.0" prefWidth="183.0">
+                            <font>
+                                <Font size="18.0"/>
+                            </font>
+                        </Label>
+
+                        <ScrollPane fitToWidth="true">
+                            <content>
+                                <GridPane hgap="15.0" vgap="15.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints minWidth="100.0" hgrow="NEVER"/>
+                                        <ColumnConstraints minWidth="200.0" hgrow="ALWAYS"/>
+                                    </columnConstraints>
+
+                                    <Label text="Name:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                                    <TextField fx:id="txtName" promptText="Physio's name" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                                    <Label text="Surname:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                                    <TextField fx:id="txtSurname" promptText="Physio's surname" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                                    <Label text="Specialization:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                                    <ComboBox fx:id="cbSpecialization" prefWidth="150.0" promptText="Select specialization" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                                    <Label text="License Number:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                                    <TextField fx:id="txtLicenseNumber" promptText="License Number" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                                    <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                                    <TextField fx:id="txtEmail" promptText="Email" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+                                    <rowConstraints>
+                                        <RowConstraints/>
+                                        <RowConstraints/>
+                                        <RowConstraints/>
+                                        <RowConstraints/>
+                                        <RowConstraints/>
+                                    </rowConstraints>
+                                </GridPane>
+                            </content>
+                        </ScrollPane>
+
+                        <HBox alignment="CENTER" spacing="15.0">
+                            <children>
+                                <Button fx:id="btnAdd" onAction="#onAddPhysio" prefWidth="100.0" text="Add">
+                                    <font>
+                                        <Font size="14.0"/>
+                                    </font>
+                                </Button>
+                                <Button fx:id="btnUpdate" onAction="#onUpdatePhysio" prefWidth="100.0" text="Modify">
+                                    <font>
+                                        <Font size="14.0"/>
+                                    </font>
+                                </Button>
+                                <Button fx:id="btnDelete" onAction="#onDeletePhysio" prefWidth="100.0" text="Delete">
+                                    <font>
+                                        <Font size="14.0"/>
+                                    </font>
+                                </Button>
+                                <Button fx:id="btnClearFields" onAction="#clearFieldsAction" prefWidth="100.0" text="Clear Fields">
+                                    <font>
+                                        <Font size="14.0"/>
+                                    </font>
+                                </Button>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <StackPane>
+            <children>
+                <HBox alignment="BOTTOM_RIGHT">
+                    <children>
+                        <Button fx:id="btnBack" onAction="#onBackButtonClick" prefHeight="30.0" prefWidth="140.0" text="Back">
+                            <font>
+                                <Font size="14.0"/>
+                            </font>
+                        </Button>
+                    </children>
+                </HBox>
+            </children>
+        </StackPane>
+    </children>
+</VBox>
