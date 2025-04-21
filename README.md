@@ -1,4 +1,4 @@
-<a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
+
 
 <h2>Table of Contents</h2>
 <ul>
