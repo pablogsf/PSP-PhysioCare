@@ -48,7 +48,7 @@
 
 <h2 id="technologies">🛠️ Technologies</h2>
 <ul>
-  <li><strong>Java 17</strong></li>
+  <li><strong>Java 23</strong></li>
   <li><strong>JavaFX 21</strong></li>
   <li><strong>Maven Wrapper</strong> (<code>./mvnw</code> / <code>mvnw.cmd</code>)</li>
   <li><strong>Gson</strong> (JSON serialization/deserialization)</li>
