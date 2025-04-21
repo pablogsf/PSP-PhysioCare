@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import com.calendarfx.view.CalendarView?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.matias.physiocarepsp.viewscontroller.CalendarController"
+      spacing="10"
+      alignment="CENTER">
+    <children>
+        <Label text="Calendario de Citas"
+               style="-fx-font-size: 24px; -fx-font-weight: bold;" />
+        <CalendarView fx:id="calendarView"
+                      VBox.vgrow="ALWAYS"
+                      prefWidth="900"
+                      prefHeight="600" />
+        <Button text="Volver al Menú"
+                onAction="#onBackButtonClick" />
+    </children>
+</VBox>

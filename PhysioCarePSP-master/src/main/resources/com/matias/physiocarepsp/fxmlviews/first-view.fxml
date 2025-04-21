@@ -31,6 +31,10 @@
                         <Label text="Physios Management" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
                         <Button fx:id="btnPhysios" onAction="#openPhysiosAction" text="Open" />
                     </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label text="Calendario de Citas" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <Button fx:id="btnCalendar" text="Open" onAction="#openCalendarAction" />
+                    </HBox>
                 </VBox>
             </VBox>
         </VBox>

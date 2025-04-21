@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import com.matias.physiocarepsp.models.Patient.Patient;
 import com.matias.physiocarepsp.models.Patient.PatientListResponse;
 import com.matias.physiocarepsp.models.Patient.PatientResponse;
+import com.matias.physiocarepsp.models.Record.RecordListResponse;
+import com.matias.physiocarepsp.models.Record.RecordResponse;
+import com.matias.physiocarepsp.utils.LocalDateAdapter;
 import com.matias.physiocarepsp.utils.ServiceUtils;
 import com.matias.physiocarepsp.utils.Utils;
 import javafx.application.Platform;
@@ -21,6 +24,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -57,7 +62,9 @@ public class PatientsViewController implements Initializable {
     private Button btnUpdate;
     private ObservableList<Patient> allPatients = FXCollections.observableArrayList();
 
-    private final Gson gson = new Gson();
+    private final Gson gson = new Gson().newBuilder()
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .create();
 
     /**
      * Initializes the controller and sets up the patient list selection listener.
@@ -67,6 +74,7 @@ public class PatientsViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        //recordFindBySurname("López");
         lsPatients.getSelectionModel().selectedItemProperty().addListener(
                 new ChangeListener<Patient>() {
                     @Override
@@ -81,7 +89,56 @@ public class PatientsViewController implements Initializable {
         txtSearch.textProperty().addListener((observable, oldValue, newValue) -> filterPatients(newValue));
 
         getPatients();
+//        patientFindById("67fbc4b936ea1c9c2d1175b9");
+//        recordFindById("67fbc4b936ea1c9c2d1175cd");
+
     }
+
+    private void patientFindById(String id) {
+        String url = ServiceUtils.SERVER + "/patients/" + id;
+        System.out.println("Requesting URL: " + url);
+
+        ServiceUtils.getResponseAsync(url, null, "GET")
+                .thenApply(json -> gson.fromJson(json, PatientResponse.class))
+                .thenAccept(response -> {
+                    if (!response.isError()) {
+                        Platform.runLater(() -> {
+                            System.out.println("Patient fetched successfully: " + response.getPatient());
+                        });
+                    } else {
+                        Platform.runLater(() -> showAlert("Error", response.getErrorMessage(), 2));
+                    }
+                })
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    Platform.runLater(() -> showAlert("Error", "Failed to fetch patient: " + ex.getMessage(), 2));
+                    return null;
+                });
+    }
+
+    private void recordFindById(String id) {
+        String url = ServiceUtils.SERVER + "/records/" + id;
+        System.out.println("Requesting URL: " + url);
+
+        ServiceUtils.getResponseAsync(url, null, "GET")
+                .thenApply(json -> gson.fromJson(json, RecordResponse.class))
+                .thenAccept(response -> {
+                    if (!response.isError()) {
+                        Platform.runLater(() -> {
+                            System.out.println("Record fetched successfully: " + response.getRecord());
+                        });
+                    } else {
+                        Platform.runLater(() -> showAlert("Error", response.getErrorMessage(), 2));
+                    }
+                })
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    Platform.runLater(() -> showAlert("Error", "Failed to fetch record: " + ex.getMessage(), 2));
+                    return null;
+                });
+    }
+
+
 
     /**
      * Filters the list of patients based on the search text entered by the user.
@@ -100,6 +157,29 @@ public class PatientsViewController implements Initializable {
             );
             lsPatients.setItems(filteredPatients);
         }
+    }
+
+    private void recordFindBySurname(String surname) {
+        String encodedSurname = URLEncoder.encode(surname, StandardCharsets.UTF_8);
+        String url = ServiceUtils.SERVER + "/records/find?surname=" + encodedSurname;
+        System.out.println("Requesting URL: " + url);
+
+        ServiceUtils.getResponseAsync(url, null, "GET")
+                .thenApply(json -> gson.fromJson(json, RecordListResponse.class))
+                .thenAccept(response -> {
+                    if (!response.isError()) {
+                        Platform.runLater(() -> {
+                            System.out.println("Records fetched successfully: " + response.getRecords());
+                        });
+                    } else {
+                        Platform.runLater(() -> showAlert("Error", response.getErrorMessage(), 2));
+                    }
+                })
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    Platform.runLater(() -> showAlert("Error", "Failed to fetch records: " + ex.getMessage(), 2));
+                    return null;
+                });
     }
 
     /**
