@@ -11,8 +11,13 @@ public class Appointment {
 
     @SerializedName("_id")
     private String id;
+    @SerializedName("patientName")
+    private String patientName;
+    @SerializedName("date")
     private LocalDate date;
     private String physio;
+    @SerializedName("physioName")
+    private String physioName;
     private String diagnosis;
     private String treatment;
     private String observations;
@@ -69,6 +74,43 @@ public class Appointment {
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * Gets the name of the patient.
+     *
+     * @return the patient's name
+     */
+    public String getPatientName() {
+        return patientName;
+    }
+
+    /**
+     * Sets the name of the patient.
+     *
+     * @param patientName the patient's name
+     */
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+
+    /**
+     * Gets the name of the physiotherapist.
+     *
+     * @return the physiotherapist's name
+     */
+    public String getPhysioName() {
+        return physioName;
+    }
+
+    /**
+     * Sets the name of the physiotherapist.
+     *
+     * @param physioName the physiotherapist's name
+     */
+    public void setPhysioName(String physioName) {
+        this.physioName = physioName;
     }
 
     /**

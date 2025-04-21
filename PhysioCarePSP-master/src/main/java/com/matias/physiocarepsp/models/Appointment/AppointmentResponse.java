@@ -1,5 +1,6 @@
 package com.matias.physiocarepsp.models.Appointment;
 
+import com.google.gson.annotations.SerializedName;
 import com.matias.physiocarepsp.models.BaseResponse;
 
 /**
@@ -7,7 +8,7 @@ import com.matias.physiocarepsp.models.BaseResponse;
  * Extends the BaseResponse class to include error handling.
  */
 public class AppointmentResponse extends BaseResponse {
-
+    @SerializedName("result")
     private Appointment result;
 
     /**

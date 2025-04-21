@@ -33,4 +33,16 @@ public class FirstViewController {
         String title = "Physios | PhysioCare";
         Utils.switchView(source, fxmlFile, title);
     }
+
+    /**
+     * Handles the action to open the Calendar view.
+     *
+     * @param event the event triggered by the user
+     */
+    public void openCalendarAction(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/calendar-view.fxml";
+        String title = "Calendar | PhysioCare";
+        Utils.switchView(source, fxmlFile, title);
+    }
 }

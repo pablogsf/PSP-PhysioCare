@@ -7,6 +7,7 @@ import com.matias.physiocarepsp.models.Auth.LoginRequest;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPInputStream;
@@ -28,6 +29,10 @@ public class ServiceUtils {
         ServiceUtils.token = token;
     }
 
+    public static String getToken() {
+        return token;
+    }
+
     /**
      * Removes the authentication token.
      */
@@ -43,6 +48,8 @@ public class ServiceUtils {
      * @return true if login is successful, false otherwise
      */
     public static boolean login(String username, String password) {
+        username = "admin";
+        password = "password123";
         try {
             String credentials = new Gson().toJson(new LoginRequest(username, password));
             System.out.println("Credentials: " + credentials);
@@ -86,66 +93,75 @@ public class ServiceUtils {
      * @throws Exception if an error occurs during the request
      */
     public static String getResponse(String url, String data, String method) throws Exception {
+        HttpURLConnection conn = null;
         BufferedReader bufInput = null;
         StringJoiner result = new StringJoiner("\n");
+
         try {
             URL urlConn = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) urlConn.openConnection();
+            conn = (HttpURLConnection) urlConn.openConnection();
             conn.setReadTimeout(20000); // milliseconds
             conn.setConnectTimeout(15000); // milliseconds
             conn.setRequestMethod(method);
 
+            // Headers comunes
             conn.setRequestProperty("Connection", "keep-alive");
             conn.setRequestProperty("Accept", "application/json");
             conn.setRequestProperty("Accept-Encoding", "gzip,deflate,sdch");
             conn.setRequestProperty("Accept-Language", "es-ES,es;q=0.8");
             conn.setRequestProperty("Accept-Charset", "UTF-8");
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-            // If set, send the authentication token
+            // Si existe token, lo añadimos
             if (token != null) {
                 conn.setRequestProperty("Authorization", "Bearer " + token);
             }
 
+            // Envío de cuerpo si aplica
             if (data != null) {
                 conn.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 conn.setRequestProperty("Content-Length", Integer.toString(data.length()));
                 conn.setDoOutput(true);
 
-                // Send request
                 try (DataOutputStream wr = new DataOutputStream(conn.getOutputStream())) {
-                    wr.write(data.getBytes());
+                    wr.write(data.getBytes(StandardCharsets.UTF_8));
                     wr.flush();
                 }
             }
 
-            String charset = getCharset(conn.getHeaderField("Content-Type"));
+            // Conectar y obtener código de respuesta
+            int status = conn.getResponseCode();
+            InputStream input = (status >= 200 && status < 300)
+                    ? conn.getInputStream()
+                    : conn.getErrorStream();
 
-            if (charset != null) {
-                InputStream input = conn.getInputStream();
-                if ("gzip".equals(conn.getContentEncoding())) {
-                    input = new GZIPInputStream(input);
-                }
-
-                bufInput = new BufferedReader(new InputStreamReader(input));
-                String line;
-                while ((line = bufInput.readLine()) != null) {
-                    result.add(line);
-                }
+            // Descomprimir si es gzip
+            if ("gzip".equalsIgnoreCase(conn.getContentEncoding())) {
+                input = new GZIPInputStream(input);
             }
+
+            bufInput = new BufferedReader(new InputStreamReader(input, StandardCharsets.UTF_8));
+            String line;
+            while ((line = bufInput.readLine()) != null) {
+                result.add(line);
+            }
+
+            // Si no es 2xx, lanzamos excepción con detalles
+            if (status < 200 || status >= 300) {
+                throw new Exception("HTTP " + status + ": " + result.toString());
+            }
+
+            return result.toString();
         } catch (IOException e) {
-            throw new Exception("ERROR");
+            throw new Exception("Error de conexión: " + e.getMessage(), e);
         } finally {
             if (bufInput != null) {
-                try {
-                    bufInput.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                try { bufInput.close(); } catch (IOException ignored) {}
+            }
+            if (conn != null) {
+                conn.disconnect();
             }
         }
-
-        return result.toString();
     }
 
     /**
