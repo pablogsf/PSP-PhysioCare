@@ -2,7 +2,10 @@ package com.matias.physiocarepsp.models.Record;
 
 import com.google.gson.annotations.SerializedName;
 import com.matias.physiocarepsp.models.Appointment.Appointment;
+import com.matias.physiocarepsp.models.Patient.Patient;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,9 +15,11 @@ public class Record {
 
     @SerializedName("_id")
     private String id;
-    private String patient;
+    private Patient patient;
     private String medicalRecord;
     private List<Appointment> appointments;
+
+    public Record() { }
 
     /**
      * Constructs a new Record without an ID.
@@ -23,7 +28,7 @@ public class Record {
      * @param medicalRecord the medical history or record of the patient
      * @param appointments  the list of appointments associated with the patient
      */
-    public Record(String patient, String medicalRecord, List<Appointment> appointments) {
+    public Record(Patient patient, String medicalRecord, List<Appointment> appointments) {
         this.patient = patient;
         this.medicalRecord = medicalRecord;
         this.appointments = appointments;
@@ -37,7 +42,7 @@ public class Record {
      * @param medicalRecord the medical history or record of the patient
      * @param appointments  the list of appointments associated with the patient
      */
-    public Record(String id, String patient, String medicalRecord, List<Appointment> appointments) {
+    public Record(String id, Patient patient, String medicalRecord, List<Appointment> appointments) {
         this.id = id;
         this.patient = patient;
         this.medicalRecord = medicalRecord;
@@ -67,7 +72,7 @@ public class Record {
      *
      * @return the patient's name
      */
-    public String getPatient() {
+    public Patient getPatient() {
         return patient;
     }
 
@@ -76,7 +81,7 @@ public class Record {
      *
      * @param patient the patient's name
      */
-    public void setPatient(String patient) {
+    public void setPatient(Patient patient) {
         this.patient = patient;
     }
 

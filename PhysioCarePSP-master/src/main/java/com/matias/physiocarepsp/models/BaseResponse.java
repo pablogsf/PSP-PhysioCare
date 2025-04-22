@@ -1,10 +1,15 @@
 package com.matias.physiocarepsp.models;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Base response class for handling API responses.
  * This class provides methods to check for errors and retrieve error messages.
  */
 public class BaseResponse {
+
+    @SerializedName("ok")
+    private boolean ok;
 
     private String error;
 
@@ -14,7 +19,7 @@ public class BaseResponse {
      * @return true if there is an error, false otherwise
      */
     public boolean isError() {
-        return error != null;
+        return !ok || error != null;
     }
 
     /**

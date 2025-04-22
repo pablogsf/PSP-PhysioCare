@@ -3,6 +3,7 @@ package com.matias.physiocarepsp.models.Appointment;
 import com.google.gson.annotations.SerializedName;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Represents an appointment with details such as date, physiotherapist, diagnosis, treatment, and observations.
@@ -14,7 +15,7 @@ public class Appointment {
     @SerializedName("patientName")
     private String patientName;
     @SerializedName("date")
-    private LocalDate date;
+    private LocalDateTime date;
     private String physio;
     @SerializedName("physioName")
     private String physioName;
@@ -31,7 +32,7 @@ public class Appointment {
      * @param treatment    the treatment prescribed
      * @param observations additional observations
      */
-    public Appointment(LocalDate date, String physio, String diagnosis, String treatment, String observations) {
+    public Appointment(LocalDateTime date, String physio, String diagnosis, String treatment, String observations) {
         this.date = date;
         this.physio = physio;
         this.diagnosis = diagnosis;
@@ -49,7 +50,7 @@ public class Appointment {
      * @param treatment    the treatment prescribed
      * @param observations additional observations
      */
-    public Appointment(String id, LocalDate date, String physio, String diagnosis, String treatment, String observations) {
+    public Appointment(String id, LocalDateTime date, String physio, String diagnosis, String treatment, String observations) {
         this.id = id;
         this.date = date;
         this.physio = physio;
@@ -118,7 +119,7 @@ public class Appointment {
      *
      * @return the appointment date
      */
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
@@ -127,7 +128,7 @@ public class Appointment {
      *
      * @param date the appointment date
      */
-    public void setDate(LocalDate date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

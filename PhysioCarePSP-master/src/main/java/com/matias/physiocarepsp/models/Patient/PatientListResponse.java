@@ -1,5 +1,6 @@
 package com.matias.physiocarepsp.models.Patient;
 
+import com.google.gson.annotations.SerializedName;
 import com.matias.physiocarepsp.models.BaseResponse;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  */
 public class PatientListResponse extends BaseResponse {
 
+    @SerializedName("result")
     private List<Patient> result;
 
     /**

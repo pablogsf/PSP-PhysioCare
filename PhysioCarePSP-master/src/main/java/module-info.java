@@ -15,6 +15,7 @@ module com.matias.physiocarepsp {
     requires com.google.gson;
     requires java.desktop;
     requires com.calendarfx.view;
+    requires java.sql;
 
     opens com.matias.physiocarepsp to javafx.fxml;
     exports com.matias.physiocarepsp;
