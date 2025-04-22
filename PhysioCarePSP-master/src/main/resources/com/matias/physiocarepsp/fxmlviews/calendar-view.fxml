@@ -17,29 +17,33 @@
     <HBox spacing="10" alignment="CENTER">
         <ComboBox fx:id="patientComboBox" promptText="Selecciona paciente" prefWidth="180"/>
         <ComboBox fx:id="physioComboBox"  promptText="Selecciona fisio"   prefWidth="180"/>
-        <DatePicker fx:id="datePicker"       promptText="Fecha"             prefWidth="140"/>
-        <Spinner fx:id="hourSpinner"         prefWidth="80"/>
-        <Button fx:id="createAppointmentButton"
-                text="Crear cita" />
+        <DatePicker fx:id="datePicker"      promptText="Fecha"             prefWidth="140"/>
+        <Spinner fx:id="hourSpinner"        prefWidth="80"/>
+        <Button fx:id="createAppointmentButton" text="Crear cita" />
     </HBox>
+
+    <!-- LISTA DE CITAS DEL PACIENTE -->
+    <Label text="Citas del paciente:"
+           style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+    <ListView fx:id="appointmentListView"
+              prefWidth="800"
+              prefHeight="150" />
 
     <!-- FORMULARIO EDITAR CITA SELECCIONADA -->
     <HBox spacing="10" alignment="CENTER">
         <TextField fx:id="diagnosisField"    promptText="Diagnóstico"    prefWidth="200"/>
         <TextField fx:id="treatmentField"    promptText="Tratamiento"    prefWidth="200"/>
         <TextField fx:id="observationsField" promptText="Observaciones"  prefWidth="200"/>
-        <Button fx:id="updateAppointmentButton"
-                text="Actualizar cita" />
+        <Button    fx:id="updateAppointmentButton" text="Actualizar cita"/>
     </HBox>
 
     <!-- VISTA DEL CALENDARIO -->
     <CalendarView fx:id="calendarView"
                   VBox.vgrow="ALWAYS"
                   prefWidth="900"
-                  prefHeight="500" />
+                  prefHeight="300" />
 
     <!-- Botón de volver atrás -->
     <Button text="Volver al Menú"
             onAction="#onBackButtonClick" />
-
 </VBox>
