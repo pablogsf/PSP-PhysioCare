@@ -1,5 +1,10 @@
 
-
+<H2>Contributors</H2>
+<ul>
+  <li>Matías E. Borra Quiroz</li>
+  <li>Adrián Bermejo Naranjo</li>
+  <li>Pablo García Sánchez-Fotún</li>
+</ul>
 <h2>Table of Contents</h2>
 <ul>
   <li><a href="#overview">Overview</a></li>
