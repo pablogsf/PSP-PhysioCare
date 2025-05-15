@@ -1,221 +1,157 @@
 package com.matias.physiocarepsp.models.Appointment;
 
 import com.google.gson.annotations.SerializedName;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
- * Represents an appointment with details such as date, physiotherapist, diagnosis, treatment, and observations.
+ * Represents an appointment with details such as date/time, patient, physiotherapist,
+ * treatment, observations, and pricing information.
  */
 public class Appointment {
 
     @SerializedName("_id")
     private String id;
-    @SerializedName("patientName")
-    private String patientName;
-    @SerializedName("date")
-    private LocalDate date;
-    private String physio;
-    @SerializedName("physioName")
-    private String physioName;
-    private String diagnosis;
-    private String treatment;
-    private String observations;
 
-    /**
-     * Constructor to create an appointment without an ID.
-     *
-     * @param date         the date of the appointment
-     * @param physio       the name of the physiotherapist
-     * @param diagnosis    the diagnosis for the appointment
-     * @param treatment    the treatment prescribed
-     * @param observations additional observations
-     */
-    public Appointment(LocalDate date, String physio, String diagnosis, String treatment, String observations) {
-        this.date = date;
-        this.physio = physio;
-        this.diagnosis = diagnosis;
-        this.treatment = treatment;
-        this.observations = observations;
+    private final StringProperty patientName = new SimpleStringProperty();
+    private final StringProperty patientId = new SimpleStringProperty();
+    private final StringProperty physioName = new SimpleStringProperty();
+    private final StringProperty physioId = new SimpleStringProperty();
+    private final ObjectProperty<LocalDateTime> dateTime = new SimpleObjectProperty<>();
+    private final StringProperty diagnosis = new SimpleStringProperty();
+    private final StringProperty treatment = new SimpleStringProperty();
+    private final StringProperty observations = new SimpleStringProperty();
+    private final DoubleProperty price = new SimpleDoubleProperty();
+
+    public Appointment() {
     }
 
-    /**
-     * Constructor to create an appointment with an ID.
-     *
-     * @param id           the unique identifier of the appointment
-     * @param date         the date of the appointment
-     * @param physio       the name of the physiotherapist
-     * @param diagnosis    the diagnosis for the appointment
-     * @param treatment    the treatment prescribed
-     * @param observations additional observations
-     */
-    public Appointment(String id, LocalDate date, String physio, String diagnosis, String treatment, String observations) {
-        this.id = id;
-        this.date = date;
-        this.physio = physio;
-        this.diagnosis = diagnosis;
-        this.treatment = treatment;
-        this.observations = observations;
-    }
-
-    /**
-     * Gets the ID of the appointment.
-     *
-     * @return the appointment ID
-     */
+    // ID
     public String getId() {
         return id;
     }
-
-    /**
-     * Sets the ID of the appointment.
-     *
-     * @param id the appointment ID
-     */
     public void setId(String id) {
         this.id = id;
     }
 
-    /**
-     * Gets the name of the patient.
-     *
-     * @return the patient's name
-     */
+    // Patient name
     public String getPatientName() {
+        return patientName.get();
+    }
+    public void setPatientName(String patientName) {
+        this.patientName.set(patientName);
+    }
+    public StringProperty patientNameProperty() {
         return patientName;
     }
 
-    /**
-     * Sets the name of the patient.
-     *
-     * @param patientName the patient's name
-     */
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
+    // Patient ID
+    public String getPatientId() {
+        return patientId.get();
+    }
+    public void setPatientId(String patientId) {
+        this.patientId.set(patientId);
+    }
+    public StringProperty patientIdProperty() {
+        return patientId;
     }
 
-
-    /**
-     * Gets the name of the physiotherapist.
-     *
-     * @return the physiotherapist's name
-     */
+    // Physiotherapist name
     public String getPhysioName() {
+        return physioName.get();
+    }
+    public void setPhysioName(String physioName) {
+        this.physioName.set(physioName);
+    }
+    public StringProperty physioNameProperty() {
         return physioName;
     }
 
-    /**
-     * Sets the name of the physiotherapist.
-     *
-     * @param physioName the physiotherapist's name
-     */
-    public void setPhysioName(String physioName) {
-        this.physioName = physioName;
+    // Physiotherapist ID
+    public String getPhysioId() {
+        return physioId.get();
+    }
+    public void setPhysioId(String physioId) {
+        this.physioId.set(physioId);
+    }
+    public StringProperty physioIdProperty() {
+        return physioId;
     }
 
-    /**
-     * Gets the date of the appointment.
-     *
-     * @return the appointment date
-     */
-    public LocalDate getDate() {
-        return date;
+    // Date and time
+    public LocalDateTime getDateTime() {
+        return dateTime.get();
+    }
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime.set(dateTime);
+    }
+    public ObjectProperty<LocalDateTime> dateTimeProperty() {
+        return dateTime;
     }
 
-    /**
-     * Sets the date of the appointment.
-     *
-     * @param date the appointment date
-     */
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    /**
-     * Gets the name of the physiotherapist.
-     *
-     * @return the physiotherapist's name
-     */
-    public String getPhysio() {
-        return physio;
-    }
-
-    /**
-     * Sets the name of the physiotherapist.
-     *
-     * @param physio the physiotherapist's name
-     */
-    public void setPhysio(String physio) {
-        this.physio = physio;
-    }
-
-    /**
-     * Gets the diagnosis for the appointment.
-     *
-     * @return the diagnosis
-     */
+    // Diagnosis
     public String getDiagnosis() {
+        return diagnosis.get();
+    }
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis.set(diagnosis);
+    }
+    public StringProperty diagnosisProperty() {
         return diagnosis;
     }
 
-    /**
-     * Sets the diagnosis for the appointment.
-     *
-     * @param diagnosis the diagnosis
-     */
-    public void setDiagnosis(String diagnosis) {
-        this.diagnosis = diagnosis;
-    }
-
-    /**
-     * Gets the treatment prescribed for the appointment.
-     *
-     * @return the treatment
-     */
+    // Treatment
     public String getTreatment() {
+        return treatment.get();
+    }
+    public void setTreatment(String treatment) {
+        this.treatment.set(treatment);
+    }
+    public StringProperty treatmentProperty() {
         return treatment;
     }
 
-    /**
-     * Sets the treatment prescribed for the appointment.
-     *
-     * @param treatment the treatment
-     */
-    public void setTreatment(String treatment) {
-        this.treatment = treatment;
-    }
-
-    /**
-     * Gets additional observations for the appointment.
-     *
-     * @return the observations
-     */
+    // Observations
     public String getObservations() {
+        return observations.get();
+    }
+    public void setObservations(String observations) {
+        this.observations.set(observations);
+    }
+    public StringProperty observationsProperty() {
         return observations;
     }
 
-    /**
-     * Sets additional observations for the appointment.
-     *
-     * @param observations the observations
-     */
-    public void setObservations(String observations) {
-        this.observations = observations;
+    // Price
+    public double getPrice() {
+        return price.get();
+    }
+    public void setPrice(double price) {
+        this.price.set(price);
+    }
+    public DoubleProperty priceProperty() {
+        return price;
     }
 
-    /**
-     * Returns a string representation of the appointment.
-     *
-     * @return a string containing appointment details
-     */
     @Override
     public String toString() {
         return "Appointment{" +
-                "date=" + date +
-                ", physio='" + physio + '\'' +
-                ", diagnosis='" + diagnosis + '\'' +
-                ", treatment='" + treatment + '\'' +
-                ", observations='" + observations + '\'' +
+                "id='" + id + '\'' +
+                ", patientName='" + getPatientName() + '\'' +
+                ", patientId='" + getPatientId() + '\'' +
+                ", physioName='" + getPhysioName() + '\'' +
+                ", physioId='" + getPhysioId() + '\'' +
+                ", dateTime=" + getDateTime() +
+                ", diagnosis='" + getDiagnosis() + '\'' +
+                ", treatment='" + getTreatment() + '\'' +
+                ", observations='" + getObservations() + '\'' +
+                ", price=" + getPrice() +
                 '}';
     }
 }
