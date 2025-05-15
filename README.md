@@ -123,3 +123,40 @@ PSP-PhysioCare/
 
 <h2 id="license">📄 License</h2>
 <p>This project is licensed under the <strong>MIT License</strong>. See <a href="LICENSE">LICENSE</a> for details.</p>
+
+
+
+🛠️ Qué falta por hacer
+
+Flujo de subida de fichas
+
+Un punto en UI (o un servicio en segundo plano) que recorra todos los Record (o los obtenga vía API), genere el PDF de cada ficha (sin incluir citas) y llame a SftpUploader.upload(host, port, user, pass, pdfBytes, pacienteId + ".pdf").
+
+
+Notificaciones por e-mail
+
+Un NotificationService que:
+
+Recoja todos los pacientes (/patients) y sus citas (/appointments?patientId=…).
+
+Para cada uno con > 8 citas, genere el PDF con generateAppointmentsPdf(), y envíe un mail recordatorio con EmailUtil.send(…).
+
+Recoja todos los fisioterapeutas y sus citas (/appointments?physioId=…), genere generateSalaryPdf(), y les envíe su nómina.
+
+
+Integración UI/UX
+
+Botones o menús para “Exportar fichas” y “Enviar notificaciones”.
+
+O bien programar estas tareas al arrancar la app.
+
+
+Próximos pasos
+
+Actualizar el Appointment model (añadir price, patientId, physioId).
+
+Implementar los dos métodos faltantes en PDFUtil.
+
+Crear la clase NotificationService con toda la lógica de recopilación, generación de PDFs y envío SFTP/Email.
+
+Añadir botones/vistas para disparar esos procesos manualmente.
