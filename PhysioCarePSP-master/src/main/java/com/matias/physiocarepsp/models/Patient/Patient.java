@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Represents a patient with personal details such as name, surname, birth date, address,
+ * Represents a patient with personal details such as name, surname, birthdate, address,
  * insurance number, and email.
  */
 public class Patient {
@@ -23,12 +23,12 @@ public class Patient {
     /**
      * Constructs a new Patient without an ID.
      *
-     * @param name            the patient's first name
-     * @param surname         the patient's last name
-     * @param birthDate       the patient's birth date
-     * @param address         the patient's address
+     * @param name the patient's first name
+     * @param surname the patient's last name
+     * @param birthDate the patient's birthdate
+     * @param address the patient's address
      * @param insuranceNumber the patient's insurance number
-     * @param email           the patient's email address
+     * @param email the patient's email address
      */
     public Patient(String name, String surname, Date birthDate, String address, String insuranceNumber, String email) {
         this.name = name;
@@ -42,13 +42,13 @@ public class Patient {
     /**
      * Constructs a new Patient with an ID.
      *
-     * @param id              the unique identifier of the patient
-     * @param name            the patient's first name
-     * @param surname         the patient's last name
-     * @param birthDate       the patient's birth date
-     * @param address         the patient's address
+     * @param id the unique identifier of the patient
+     * @param name the patient's first name
+     * @param surname the patient's last name
+     * @param birthDate the patient's birthdate
+     * @param address the patient's address
      * @param insuranceNumber the patient's insurance number
-     * @param email           the patient's email address
+     * @param email the patient's email address
      */
     public Patient(String id, String name, String surname, Date birthDate, String address, String insuranceNumber, String email) {
         this.id = id;
@@ -97,18 +97,18 @@ public class Patient {
     }
 
     /**
-     * Retrieves the patient's birth date.
+     * Retrieves the patient's birthdate.
      *
-     * @return the patient's birth date
+     * @return the patient's birthdate
      */
     public Date getBirthDate() {
         return birthDate;
     }
 
     /**
-     * Sets the patient's birth date.
+     * Sets the patient's birthdate.
      *
-     * @param birthDate the patient's birth date
+     * @param birthDate the patient's birthdate
      */
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
@@ -189,7 +189,7 @@ public class Patient {
     /**
      * Returns a string representation of the patient.
      *
-     * @return a string containing the patient's name, surname, birth date, and insurance number
+     * @return a string containing the patient's name, surname, birthdate, and insurance number
      */
     @Override
     public String toString() {
