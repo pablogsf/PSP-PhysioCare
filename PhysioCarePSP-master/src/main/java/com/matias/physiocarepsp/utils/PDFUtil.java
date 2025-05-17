@@ -7,6 +7,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
 import com.matias.physiocarepsp.models.Appointment.Appointment;
+import com.matias.physiocarepsp.models.Appointment.AppointmentDto;
 
 import java.io.ByteArrayOutputStream;
 import java.time.format.DateTimeFormatter;
@@ -112,7 +113,7 @@ public class PDFUtil {
         return baos.toByteArray();
     }
 
-    public static PdfDocument createPdfDocument(List<Appointment> appointments, String dest) {
+    public static PdfDocument createPdfDocument(List<AppointmentDto> appointments, String dest) {
         try {
             PdfWriter writer = new PdfWriter(dest);
             PdfDocument pdf = new PdfDocument(writer);
@@ -131,12 +132,10 @@ public class PDFUtil {
             table.addCell("Observaciones");
             table.addCell("Precio (€)");
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-            for (Appointment appt : appointments) {
+            for (AppointmentDto appt : appointments) {
                 table.addCell(appt.getId());
                 table.addCell(appt.getPhysioName());
-                table.addCell(appt.getDateTime().format(formatter));
+                table.addCell(appt.getDate());
                 table.addCell(appt.getDiagnosis());
                 table.addCell(appt.getTreatment());
                 table.addCell(appt.getObservations());
