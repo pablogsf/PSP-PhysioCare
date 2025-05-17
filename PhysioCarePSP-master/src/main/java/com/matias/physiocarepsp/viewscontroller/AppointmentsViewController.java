@@ -1,6 +1,8 @@
 package com.matias.physiocarepsp.viewscontroller;
 
+import com.google.api.services.gmail.Gmail;
 import com.google.gson.Gson;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.matias.physiocarepsp.models.Appointment.Appointment;
 import com.matias.physiocarepsp.models.Appointment.AppointmentDto;
 import com.matias.physiocarepsp.models.Appointment.AppointmentListDto;
@@ -9,8 +11,12 @@ import com.matias.physiocarepsp.models.Patient.Patient;
 import com.matias.physiocarepsp.models.Patient.PatientListResponse;
 import com.matias.physiocarepsp.models.Physio.Physio;
 import com.matias.physiocarepsp.models.Physio.PhysioListResponse;
+import com.matias.physiocarepsp.utils.EmailUtil;
+import com.matias.physiocarepsp.utils.PDFUtil;
 import com.matias.physiocarepsp.utils.ServiceUtils;
 import com.matias.physiocarepsp.utils.Utils;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,6 +27,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static com.matias.physiocarepsp.utils.Utils.showAlert;
 
@@ -49,6 +57,8 @@ public class AppointmentsViewController {
 
     private final ObservableList<Appointment> appointments = FXCollections.observableArrayList();
     private final Gson gson = new Gson();
+
+    private static final Logger LOGGER = Logger.getLogger(AppointmentsViewController.class.getName());
 
     @FXML
     public void initialize() {
@@ -199,6 +209,23 @@ public class AppointmentsViewController {
         } catch (NumberFormatException e) {
             showAlert("Error", "Precio inválido", 2);
         }
+
+        ServiceUtils.getResponseAsync(ServiceUtils.SERVER +"/records/"+cbPatient.getValue().getId()+"/appointments", null, "GET")
+                .thenApply(json -> gson.fromJson(json, AppointmentListDto.class))
+                .thenAccept(resp -> {
+                    if (resp.isOk()) {
+                        Platform.runLater(()->{
+                            System.out.println("Appointments: " + resp.getResult());
+
+                        });
+                    } else {
+                        // alerta de error
+                        Platform.runLater(()->{
+                            System.out.println("Error: " + resp.getResult());
+                        });
+                    }
+                });
+
     }
 
     public void onBackButtonClick(ActionEvent event) {
