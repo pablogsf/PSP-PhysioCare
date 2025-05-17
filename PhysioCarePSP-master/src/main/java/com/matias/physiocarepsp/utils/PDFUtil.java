@@ -133,12 +133,12 @@ public class PDFUtil {
             table.addCell("Precio (€)");
 
             for (AppointmentDto appt : appointments) {
-                table.addCell(appt.getId());
-                table.addCell(appt.getPhysioName());
-                table.addCell(appt.getDate());
-                table.addCell(appt.getDiagnosis());
-                table.addCell(appt.getTreatment());
-                table.addCell(appt.getObservations());
+                table.addCell(safeString(appt.getId()));
+                table.addCell(safeString(appt.getPhysioName()));
+                table.addCell(safeString(appt.getDate()));
+                table.addCell(safeString(appt.getDiagnosis()));
+                table.addCell(safeString(appt.getTreatment()));
+                table.addCell(safeString(appt.getObservations()));
                 table.addCell(String.valueOf(appt.getPrice()));
             }
 
@@ -151,5 +151,9 @@ public class PDFUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static String safeString(Object obj) {
+        return obj == null ? "" : obj.toString();
     }
 }
