@@ -7,17 +7,17 @@ import com.google.gson.annotations.SerializedName;
  */
 public class AppointmentDto {
 
+    @SerializedName("appointmentId")
+    private String appointmentId;
+
     @SerializedName("id")
-    private String id;
-
-    @SerializedName("patientName")
-    private String patientName;
-
-    @SerializedName("physioName")
-    private String physioName;
+    private String internalId;
 
     @SerializedName("date")
     private String date;
+
+    @SerializedName("physio")
+    private String physioId;
 
     @SerializedName("diagnosis")
     private String diagnosis;
@@ -28,32 +28,28 @@ public class AppointmentDto {
     @SerializedName("observations")
     private String observations;
 
-    /**
-     * Puede no venir en todas las respuestas
-     */
     @SerializedName("price")
     private Double price;
 
+    @SerializedName("patientName")
+    private String patientName;
+
+    @SerializedName("physioName")
+    private String physioName;
+
+
+    public String getAppointmentId() {
+        return appointmentId;
+    }
+    public void setAppointmentId(String appointmentId) {
+        this.appointmentId = appointmentId;
+    }
 
     public String getId() {
-        return id;
+        return internalId;
     }
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getPatientName() {
-        return patientName;
-    }
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
-    }
-
-    public String getPhysioName() {
-        return physioName;
-    }
-    public void setPhysioName(String physioName) {
-        this.physioName = physioName;
+    public void setId(String internalId) {
+        this.internalId = internalId;
     }
 
     public String getDate() {
@@ -61,6 +57,13 @@ public class AppointmentDto {
     }
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getPhysioId() {
+        return physioId;
+    }
+    public void setPhysioId(String physioId) {
+        this.physioId = physioId;
     }
 
     public String getDiagnosis() {
@@ -89,5 +92,19 @@ public class AppointmentDto {
     }
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public String getPatientName() {
+        return patientName;
+    }
+    public void setPatientName(String patientName) {
+        this.patientName = patientName;
+    }
+
+    public String getPhysioName() {
+        return physioName;
+    }
+    public void setPhysioName(String physioName) {
+        this.physioName = physioName;
     }
 }
