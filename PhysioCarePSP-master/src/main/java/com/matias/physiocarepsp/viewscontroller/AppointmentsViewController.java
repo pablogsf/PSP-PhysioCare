@@ -123,7 +123,7 @@ public class AppointmentsViewController {
 
     @FXML
     public void onAddAppointment() {
-        try {
+        /*try {
             // 1) Recojo datos de la UI
             LocalDate date = dpDate.getValue();
 
@@ -172,7 +172,30 @@ public class AppointmentsViewController {
 
         } catch (NumberFormatException nfe) {
             new Alert(Alert.AlertType.ERROR, "Precio inválido").showAndWait();
-        }
+        }*/
+
+        ServiceUtils.getResponseAsync(ServiceUtils.SERVER +"/records/"+cbPatient.getValue().getId()+"/appointments", null, "GET")
+                .thenApply(json -> gson.fromJson(json, AppointmentListResponse.class))
+                .thenAccept(resp -> {
+                    if (!resp.isError()) {
+                        Platform.runLater(()->{
+                            System.out.println("Appointments: " + resp.getAppointments());
+                        });
+                    } else {
+                        // alerta de error
+                        Platform.runLater(()->{
+                            System.out.println("Error: " + resp.getErrorMessage());
+                        });
+                    }
+                }).exceptionally(ex ->{
+                    LOGGER.log(Level.SEVERE, "Excepción ver los appointmetns", ex);
+                    return null;
+                });
+
+
+
+
+
     }
 
     private Map<String, Object> getPayloadMap(String isoDateTime) {

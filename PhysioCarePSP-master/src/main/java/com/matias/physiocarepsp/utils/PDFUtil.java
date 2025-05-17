@@ -111,4 +111,37 @@ public class PDFUtil {
         document.close();
         return baos.toByteArray();
     }
+
+    public static PdfDocument generatePdfDocument(){
+        String dest = "tableExample.pdf"; // File path and name
+        try {
+            PdfWriter writer = new PdfWriter(dest);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+            // Define column widths; here we create a table with 3 column
+            float[] columnWidths = {1, 5, 2}; // Ratio of column widths
+            Table table = new Table(UnitValue.createPercentArray(columnWidths));
+
+                    // Headers of the table
+                    // table.addCell("ID");
+            table.addCell("Name");
+            table.addCell("Quantity");
+            table.addCell("1");
+            table.addCell("iPhone");
+            table.addCell("10");
+            table.addCell("2");
+            table.addCell("iPad");
+            table.addCell("15");
+            table.addCell("3");
+            table.addCell("MacBook");
+            table.addCell("5");
+            document.add(table);
+            document.close();
+            System.out.println("Table PDF created.");
+            return pdf;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
