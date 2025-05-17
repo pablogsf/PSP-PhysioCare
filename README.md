@@ -146,17 +146,13 @@ Recoja todos los fisioterapeutas y sus citas (/appointments?physioId=…), gener
 
 Integración UI/UX
 
-Botones o menús para “Exportar fichas” y “Enviar notificaciones”.
+Botones o menús para “Exportar fichas” y “Enviar notificaciones”. Falta programar el envío de correo al tener un patient 8 citas.
 
 O bien programar estas tareas al arrancar la app.
 
 
 Próximos pasos
 
-Actualizar el Appointment model (añadir price, patientId, physioId).
-
-Implementar los dos métodos faltantes en PDFUtil.
-
 Crear la clase NotificationService con toda la lógica de recopilación, generación de PDFs y envío SFTP/Email.
 
-Añadir botones/vistas para disparar esos procesos manualmente.
+Añadir botones/vistas para disparar esos procesos manualmente. (“Exportar fichas” y “Enviar notificaciones”)
