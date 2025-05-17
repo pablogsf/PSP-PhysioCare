@@ -132,16 +132,19 @@ Flujo de subida de fichas
 
 Un punto en UI (o un servicio en segundo plano) que recorra todos los Record (o los obtenga vía API), genere el PDF de cada ficha (sin incluir citas) y llame a SftpUploader.upload(host, port, user, pass, pdfBytes, pacienteId + ".pdf").
 
+{{URL}}/records
+
+
 
 Notificaciones por e-mail
 
 Un NotificationService que:
 
-Recoja todos los pacientes (/patients) y sus citas (/appointments?patientId=…).
+Recoja todos los pacientes ({{URL}}/patients) y sus citas ({{URL}}/records/:id_patient/appointments).
 
-Para cada uno con > 8 citas, genere el PDF con generateAppointmentsPdf(), y envíe un mail recordatorio con EmailUtil.send(…).
+Para cada uno con > 8 citas,({{URL}}/records/patient/:id_patient/appointments/count) genere el PDF con generateAppointmentsPdf(), y envíe un mail recordatorio con EmailUtil.send(…).
 
-Recoja todos los fisioterapeutas y sus citas (/appointments?physioId=…), genere generateSalaryPdf(), y les envíe su nómina.
+Recoja todos los fisioterapeutas ({{URL}}/physios) y sus citas ({{URL}}/records/physio/:physio_id/appointments), genere generateSalaryPdf(), y les envíe su nómina.
 
 
 Integración UI/UX
