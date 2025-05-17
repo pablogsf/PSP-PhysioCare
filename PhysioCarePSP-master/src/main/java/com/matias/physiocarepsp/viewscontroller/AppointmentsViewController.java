@@ -1,8 +1,6 @@
 package com.matias.physiocarepsp.viewscontroller;
 
-import com.google.api.services.gmail.Gmail;
 import com.google.gson.Gson;
-import com.itextpdf.kernel.pdf.PdfDocument;
 import com.matias.physiocarepsp.models.Appointment.Appointment;
 import com.matias.physiocarepsp.models.Appointment.AppointmentDto;
 import com.matias.physiocarepsp.models.Appointment.AppointmentListDto;
@@ -11,12 +9,8 @@ import com.matias.physiocarepsp.models.Patient.Patient;
 import com.matias.physiocarepsp.models.Patient.PatientListResponse;
 import com.matias.physiocarepsp.models.Physio.Physio;
 import com.matias.physiocarepsp.models.Physio.PhysioListResponse;
-import com.matias.physiocarepsp.utils.EmailUtil;
-import com.matias.physiocarepsp.utils.PDFUtil;
 import com.matias.physiocarepsp.utils.ServiceUtils;
 import com.matias.physiocarepsp.utils.Utils;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -27,7 +21,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -174,21 +167,17 @@ public class AppointmentsViewController {
                     .toString();
 
             Map<String, Object> payload = new HashMap<>();
-            payload.put("patient",      cbPatient.getValue().getId());
-            payload.put("physio",       ServiceUtils.getUserId());
-            payload.put("date",         isoDateTime);
-            payload.put("treatment",    txtTreatment.getText());
-            payload.put("diagnosis",    "");
+            payload.put("patient", cbPatient.getValue().getId());
+            payload.put("physio", ServiceUtils.getUserId());
+            payload.put("date", isoDateTime);
+            payload.put("treatment", txtTreatment.getText());
+            payload.put("diagnosis", "");
             payload.put("observations", "");
-            payload.put("price",        Double.parseDouble(txtPrice.getText()));
+            payload.put("price", Double.parseDouble(txtPrice.getText()));
 
             String body = gson.toJson(payload);
 
-            ServiceUtils.getResponseAsync(
-                            ServiceUtils.SERVER + "/records/appointments",
-                            body,
-                            "POST"
-                    )
+            ServiceUtils.getResponseAsync(ServiceUtils.SERVER + "/records/appointments", body, "POST")
                     .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
                     .thenAccept(resp -> {
                         if (!resp.isError()) {
