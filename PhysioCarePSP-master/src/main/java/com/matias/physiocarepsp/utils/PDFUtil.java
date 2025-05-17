@@ -111,4 +111,46 @@ public class PDFUtil {
         document.close();
         return baos.toByteArray();
     }
+
+    public static PdfDocument createPdfDocument(List<Appointment> appointments, String dest) {
+        try {
+            PdfWriter writer = new PdfWriter(dest);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            float[] columnWidths = {2, 2, 3, 5, 5, 5, 2};
+            Table table = new Table(UnitValue.createPercentArray(columnWidths));
+            table.setWidth(UnitValue.createPercentValue(100));
+
+            // Encabezados
+            table.addCell("ID");
+            table.addCell("Physio");
+            table.addCell("Fecha");
+            table.addCell("Diagnóstico");
+            table.addCell("Tratamiento");
+            table.addCell("Observaciones");
+            table.addCell("Precio (€)");
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+            for (Appointment appt : appointments) {
+                table.addCell(appt.getId());
+                table.addCell(appt.getPhysioName());
+                table.addCell(appt.getDateTime().format(formatter));
+                table.addCell(appt.getDiagnosis());
+                table.addCell(appt.getTreatment());
+                table.addCell(appt.getObservations());
+                table.addCell(String.valueOf(appt.getPrice()));
+            }
+
+            document.add(table);
+            document.close();
+            System.out.println("Appointments PDF creado en: " + dest);
+            return pdf;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
