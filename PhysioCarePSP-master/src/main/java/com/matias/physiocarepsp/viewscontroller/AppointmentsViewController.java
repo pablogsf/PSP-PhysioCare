@@ -1,9 +1,10 @@
 package com.matias.physiocarepsp.viewscontroller;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
 import com.matias.physiocarepsp.models.Appointment.Appointment;
+import com.matias.physiocarepsp.models.Appointment.AppointmentDto;
+import com.matias.physiocarepsp.models.Appointment.AppointmentListDto;
 import com.matias.physiocarepsp.models.Appointment.AppointmentResponse;
-import com.matias.physiocarepsp.models.Appointment.AppointmentListResponse;
 import com.matias.physiocarepsp.models.Patient.Patient;
 import com.matias.physiocarepsp.models.Patient.PatientListResponse;
 import com.matias.physiocarepsp.models.Physio.Physio;
@@ -11,6 +12,8 @@ import com.matias.physiocarepsp.models.Physio.PhysioListResponse;
 import com.matias.physiocarepsp.utils.ServiceUtils;
 import com.matias.physiocarepsp.utils.Utils;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,19 +21,27 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import static com.matias.physiocarepsp.utils.Utils.showAlert;
 
 public class AppointmentsViewController {
-    private static final Logger LOGGER = Logger.getLogger(AppointmentsViewController.class.getName());
-
     @FXML private TableView<Appointment> tblAppointments;
-    @FXML private TableColumn<Appointment, String> colDate, colPatient, colPhysio, colTreatment, colPrice;
+    @FXML private TableColumn<Appointment, String> colDate;
+    @FXML private TableColumn<Appointment, String> colPatient;
+    @FXML private TableColumn<Appointment, String> colPhysio;
+    @FXML private TableColumn<Appointment, String> colTreatment;
+    @FXML private TableColumn<Appointment, Number> colPrice;
+
     @FXML private DatePicker dpDate;
     @FXML private ComboBox<Patient> cbPatient;
     @FXML private ComboBox<Physio> cbPhysio;
@@ -41,82 +52,102 @@ public class AppointmentsViewController {
 
     @FXML
     public void initialize() {
-        colDate.setCellValueFactory(c -> c.getValue().dateTimeProperty().asString());
-        colPatient.setCellValueFactory(c -> c.getValue().patientNameProperty());
-        colPhysio.setCellValueFactory(c -> c.getValue().physioNameProperty());
-        colTreatment.setCellValueFactory(c -> c.getValue().treatmentProperty());
-        colPrice.setCellValueFactory(c -> c.getValue().priceProperty().asString());
+        // Fecha: formateamos LocalDateTime a String
+        colDate.setCellValueFactory(cell -> {
+            LocalDateTime dt = cell.getValue().getDateTime();
+            String formatted = dt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+            return new SimpleStringProperty(formatted);
+        });
+
+        // Paciente
+        colPatient.setCellValueFactory(cell ->
+                new SimpleStringProperty(cell.getValue().getPatientName())
+        );
+
+        // Fisioterapeuta
+        colPhysio.setCellValueFactory(cell ->
+                new SimpleStringProperty(cell.getValue().getPhysioName())
+        );
+
+        // Tratamiento
+        colTreatment.setCellValueFactory(cell ->
+                new SimpleStringProperty(cell.getValue().getTreatment())
+        );
+
+        // Precio
+        colPrice.setCellValueFactory(cell ->
+                new SimpleDoubleProperty(cell.getValue().getPrice())
+        );
 
         tblAppointments.setItems(appointments);
+
         loadPatients();
         loadPhysios();
-        loadAppointments(); // ahora sí puede usar ServiceUtils.getUserId()
+        loadAppointments();
     }
 
     private void loadPatients() {
         ServiceUtils.getResponseAsync(ServiceUtils.SERVER + "/patients", null, "GET")
                 .thenApply(json -> gson.fromJson(json, PatientListResponse.class))
-                .thenAccept(resp -> cbPatient.getItems().setAll(resp.getPatients()))
-                .exceptionally(ex -> {
-                    LOGGER.log(Level.SEVERE, "Error cargando pacientes", ex);
-                    return null;
-                });
+                .thenAccept(resp -> Platform.runLater(() ->
+                        cbPatient.getItems().setAll(resp.getPatients())
+                ));
     }
 
     private void loadPhysios() {
         ServiceUtils.getResponseAsync(ServiceUtils.SERVER + "/physios", null, "GET")
                 .thenApply(json -> gson.fromJson(json, PhysioListResponse.class))
-                .thenAccept(resp -> cbPhysio.getItems().setAll(resp.getPhysios()))
-                .exceptionally(ex -> {
-                    LOGGER.log(Level.SEVERE, "Error cargando fisioterapeutas", ex);
-                    return null;
-                });
+                .thenAccept(resp -> Platform.runLater(() ->
+                        cbPhysio.getItems().setAll(resp.getPhysios())
+                ));
     }
 
     private void loadAppointments() {
         String physioId = ServiceUtils.getUserId();
         if (physioId == null) {
-            LOGGER.warning("No hay usuario logueado, physioId es null");
+            showAlert("Error", "No hay usuario logueado.", 2);
             return;
         }
 
         String url = ServiceUtils.SERVER + "/records/physio/" + physioId + "/appointments";
-        LOGGER.info("Cargando citas desde: " + url);
 
         ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenAccept(json -> {
-                    try {
-                        JsonObject root = JsonParser.parseString(json).getAsJsonObject();
-                        JsonArray arr   = root.getAsJsonArray("result");
-                        var list = FXCollections.<Appointment>observableArrayList();
-
-                        for (JsonElement el : arr) {
-                            JsonObject o = el.getAsJsonObject();
-                            Appointment a = new Appointment();
-                            a.setId(         o.get("id").getAsString());
-                            a.setPatientName(o.get("patientName").getAsString());
-                            a.setPhysioName( o.get("physioName").getAsString());
-                            a.setDateTime(LocalDateTime.parse(
-                                    o.get("date").getAsString(),
-                                    DateTimeFormatter.ISO_OFFSET_DATE_TIME
-                            ));
-                            a.setDiagnosis(   o.get("diagnosis").getAsString());
-                            a.setTreatment(   o.get("treatment").getAsString());
-                            a.setObservations(o.get("observations").getAsString());
-                            if (o.has("price")) {
-                                a.setPrice(o.get("price").getAsDouble());
-                            }
-                            list.add(a);
-                        }
-
-                        Platform.runLater(() -> appointments.setAll(list));
-
-                    } catch (Exception ex) {
-                        LOGGER.log(Level.SEVERE, "Error parseando citas", ex);
+                // 1. Deserializamos JSON en DTO plano
+                .thenApply(json -> gson.fromJson(json, AppointmentListDto.class))
+                .thenAccept(dto -> {
+                    if (!dto.isOk()) {
+                        Platform.runLater(() ->
+                                showAlert("Error", "Error cargando citas.", 2)
+                        );
+                        return;
                     }
+
+                    // 2. Convertimos cada AppointmentDto en Appointment
+                    List<Appointment> list = new ArrayList<>();
+                    for (AppointmentDto d : dto.getResult()) {
+                        Appointment a = new Appointment();
+                        a.setId(d.getId());
+                        a.setPatientName(d.getPatientName());
+                        a.setPhysioName(d.getPhysioName());
+                        a.setDateTime(LocalDateTime.parse(
+                                d.getDate(), DateTimeFormatter.ISO_OFFSET_DATE_TIME
+                        ));
+                        a.setDiagnosis(d.getDiagnosis());
+                        a.setTreatment(d.getTreatment());
+                        a.setObservations(d.getObservations());
+                        if (d.getPrice() != null) {
+                            a.setPrice(d.getPrice());
+                        }
+                        list.add(a);
+                    }
+
+                    // 3. Actualizamos la tabla en el hilo de UI
+                    Platform.runLater(() -> appointments.setAll(list));
                 })
                 .exceptionally(ex -> {
-                    LOGGER.log(Level.SEVERE, "Error cargando citas", ex);
+                    Platform.runLater(() ->
+                            showAlert("Error", "No se pudieron cargar las citas", 2)
+                    );
                     return null;
                 });
     }
@@ -124,83 +155,56 @@ public class AppointmentsViewController {
     @FXML
     public void onAddAppointment() {
         try {
-            // 1) Recojo datos de la UI
             LocalDate date = dpDate.getValue();
-
-            // crea un Instant en UTC, truncado a segundos
-            Instant instant = date
+            // Instant en UTC sin nanos
+            String isoDateTime = date
                     .atTime(LocalTime.now())
                     .atOffset(ZoneOffset.UTC)
-                    .toInstant()
-                    .truncatedTo(ChronoUnit.SECONDS);
+                    .truncatedTo(ChronoUnit.SECONDS)
+                    .toString();
 
-            String isoDateTime = instant.toString();
-            // queda algo como "2025-05-30T21:31:49Z"
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("patient",      cbPatient.getValue().getId());
+            payload.put("physio",       ServiceUtils.getUserId());
+            payload.put("date",         isoDateTime);
+            payload.put("treatment",    txtTreatment.getText());
+            payload.put("diagnosis",    "");
+            payload.put("observations", "");
+            payload.put("price",        Double.parseDouble(txtPrice.getText()));
 
-            // 2) payload igual que antes
-            Map<String, Object> payload = getPayloadMap(isoDateTime);
             String body = gson.toJson(payload);
 
-            LOGGER.info("POST " + ServiceUtils.SERVER + "/records/appointments");
-            LOGGER.info("Payload: " + body);
-
-            // 3) envío y manejo de la respuesta
             ServiceUtils.getResponseAsync(
                             ServiceUtils.SERVER + "/records/appointments",
                             body,
                             "POST"
                     )
-                    .thenApply(json -> {
-                        LOGGER.info("Respuesta raw: " + json);
-                        return gson.fromJson(json, AppointmentResponse.class);
-                    })
+                    .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
                     .thenAccept(resp -> {
                         if (!resp.isError()) {
-                            appointments.add(resp.getAppointment());
+                            Platform.runLater(() -> appointments.add(resp.getAppointment()));
                         } else {
-                            new Alert(Alert.AlertType.ERROR, resp.getErrorMessage()).showAndWait();
+                            Platform.runLater(() ->
+                                    showAlert("Error", resp.getErrorMessage(), 2)
+                            );
                         }
                     })
                     .exceptionally(ex -> {
-                        LOGGER.log(Level.SEVERE, "Excepción al crear cita", ex);
-                        // muestra también el cuerpo de la excepción
-                        new Alert(Alert.AlertType.ERROR,
-                                "No pude crear cita:\n" + ex.getCause().getMessage()
-                        ).showAndWait();
+                        Platform.runLater(() ->
+                                showAlert("Error", "Error al crear cita", 2)
+                        );
                         return null;
                     });
 
-        } catch (NumberFormatException nfe) {
-            new Alert(Alert.AlertType.ERROR, "Precio inválido").showAndWait();
+        } catch (NumberFormatException e) {
+            showAlert("Error", "Precio inválido", 2);
         }
     }
 
-    private Map<String, Object> getPayloadMap(String isoDateTime) {
-        String patientId = cbPatient.getValue().getId();
-        String physioId  = ServiceUtils.getUserId();  // también lo usas aquí si lo necesitas
-        String treatment = txtTreatment.getText();
-        double price     = Double.parseDouble(txtPrice.getText());
-
-        Map<String, Object> payload = new HashMap<>();
-        payload.put("patient",      patientId);
-        payload.put("physio",       physioId);
-        payload.put("date",         isoDateTime);
-        payload.put("treatment",    treatment);
-        payload.put("diagnosis",    "");
-        payload.put("observations", "");
-        payload.put("price",        price);
-        return payload;
-    }
-
-    /**
-     * Handles the action to navigate back to the main view.
-     *
-     * @param actionEvent the event triggered by the back button
-     */
-    public void onBackButtonClick(ActionEvent actionEvent) {
-        Node source = (Node) actionEvent.getSource();
-        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/first-view.fxml";
-        String title = "Welcome | PhysioCare";
-        Utils.switchView(source, fxmlFile, title);
+    public void onBackButtonClick(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        Utils.switchView(source,
+                "/com/matias/physiocarepsp/fxmlviews/first-view.fxml",
+                "Welcome | PhysioCare");
     }
 }
