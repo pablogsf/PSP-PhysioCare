@@ -22,7 +22,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.input.MouseButton;
 
+import javafx.scene.input.MouseEvent;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -89,6 +91,11 @@ public class PatientsViewController implements Initializable {
         txtSearch.textProperty().addListener((observable, oldValue, newValue) -> filterPatients(newValue));
 
         getPatients();
+
+        lsPatients.setOnMouseClicked(mouseEvent -> {
+            doubleClick(mouseEvent);
+        });
+
 //        patientFindById("67fbc4b936ea1c9c2d1175b9");
 //        recordFindById("67fbc4b936ea1c9c2d1175cd");
 
@@ -402,5 +409,15 @@ public class PatientsViewController implements Initializable {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
         dpBirthDate.setValue(localDate);
+    }
+
+    public void doubleClick(MouseEvent mouseEvent) {
+        if(mouseEvent.getButton().equals(MouseButton.PRIMARY)
+                && (mouseEvent.getClickCount()==2)){
+                Node source = (Node) mouseEvent.getSource();
+                String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/appointments-view.fxml";
+                String title = "Welcome | Appointments";
+                Utils.switchView(source, fxmlFile, title);
+        }
     }
 }

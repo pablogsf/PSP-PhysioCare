@@ -9,10 +9,14 @@ import com.matias.physiocarepsp.models.Patient.PatientListResponse;
 import com.matias.physiocarepsp.models.Physio.Physio;
 import com.matias.physiocarepsp.models.Physio.PhysioListResponse;
 import com.matias.physiocarepsp.utils.ServiceUtils;
+import com.matias.physiocarepsp.utils.Utils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,6 +46,7 @@ public class AppointmentsViewController {
         loadPatients();
         loadPhysios();
         loadAppointments();
+
     }
 
     private void loadPatients() {
@@ -79,5 +84,12 @@ public class AppointmentsViewController {
                         // alerta de error
                     }
                 });
+    }
+
+    public void btn_back(ActionEvent actionEvent) {
+        Node source = (Node) actionEvent.getSource();
+        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/patients-view.fxml";
+        String title = "Welcome | Patients";
+        Utils.switchView(source, fxmlFile, title);
     }
 }
