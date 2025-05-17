@@ -37,6 +37,11 @@ public class AppointmentsViewController {
 
     private final ObservableList<Appointment> appointments = FXCollections.observableArrayList();
     private final Gson gson = new Gson();
+    private String physioId;
+
+    public void setPhysioId(String physioId) {
+        this.physioId = physioId;
+    }
 
     @FXML
     public void initialize() {
@@ -83,48 +88,36 @@ public class AppointmentsViewController {
 //    }
 
     private void loadAppointments() {
-        ServiceUtils.getResponseAsync(ServiceUtils.SERVER + "/records/appointments", null, "GET")
+        System.out.println("Loading appointments for physio ID: " + physioId);
+        String url = ServiceUtils.SERVER +
+                "/records/physio/" + physioId + "/appointments";
+        ServiceUtils.getResponseAsync(url, null, "GET")
                 .thenAccept(json -> {
                     try {
                         JsonObject root = JsonParser.parseString(json).getAsJsonObject();
-                        JsonArray arr   = root.getAsJsonArray("appointments");
+                        JsonArray arr   = root.getAsJsonArray("result");
                         var list = FXCollections.<Appointment>observableArrayList();
 
                         for (JsonElement el : arr) {
                             JsonObject o = el.getAsJsonObject();
                             Appointment a = new Appointment();
-                            // id
-                            a.setId(o.get("_id").getAsString());
-                            // paciente
-                            a.setPatientId(o.get("patient").getAsString());
-                            // Si quieres mostrar el nombre, haz otra llamada o inclúyelo en la respuesta:
-                            a.setPatientName(o.has("patientName")
-                                    ? o.get("patientName").getAsString()
-                                    : "");
-                            // fisioterapeuta
-                            a.setPhysioId(o.get("physio").getAsString());
-                            a.setPhysioName(o.has("physioName")
-                                    ? o.get("physioName").getAsString()
-                                    : "");
-                            // fecha y hora
-                            a.setDateTime(
-                                    LocalDateTime.parse(
-                                            o.get("date").getAsString(),
-                                            DateTimeFormatter.ISO_OFFSET_DATE_TIME
-                                    )
-                            );
-                            // tratamiento, observaciones, precio
+                            a.setId(         o.get("id").getAsString());
+                            a.setPatientName(o.get("patientName").getAsString());
+                            a.setPhysioName( o.get("physioName").getAsString());
+                            a.setDateTime(LocalDateTime.parse(
+                                    o.get("date").getAsString(),
+                                    DateTimeFormatter.ISO_OFFSET_DATE_TIME
+                            ));
+                            a.setDiagnosis(   o.get("diagnosis").getAsString());
                             a.setTreatment(   o.get("treatment").getAsString());
-                            a.setDiagnosis(   o.has("diagnosis") ? o.get("diagnosis").getAsString() : "");
-                            a.setObservations(o.has("observations") ? o.get("observations").getAsString() : "");
-                            a.setPrice(       o.get("price").getAsDouble());
-
+                            a.setObservations(o.get("observations").getAsString());
+                            // si antes añadiste price en tu modelo:
+                            if (o.has("price"))
+                                a.setPrice(o.get("price").getAsDouble());
                             list.add(a);
                         }
 
-                        // Como estamos fuera del hilo de la UI, volvemos al FX Thread:
                         Platform.runLater(() -> appointments.setAll(list));
-
                     } catch (Exception ex) {
                         LOGGER.log(Level.SEVERE, "Error parseando citas", ex);
                     }

@@ -18,6 +18,7 @@ import java.util.zip.GZIPInputStream;
 public class ServiceUtils {
 
     private static String token = null;
+    private static String userId = null;
     public static final String SERVER = "http://matiasborra.es:8081";
 
     /**
@@ -27,6 +28,10 @@ public class ServiceUtils {
      */
     public static void setToken(String token) {
         ServiceUtils.token = token;
+    }
+
+    public static void setUserId(String userId) {
+        ServiceUtils.userId = userId;
     }
 
     public static String getToken() {
@@ -40,6 +45,10 @@ public class ServiceUtils {
         ServiceUtils.token = null;
     }
 
+    public static String getUserId() { return userId; }
+
+    public static void removeUserId() { ServiceUtils.userId = null;}
+
     /**
      * Logs in the user by sending a POST request with the provided credentials.
      *
@@ -48,8 +57,8 @@ public class ServiceUtils {
      * @return true if login is successful, false otherwise
      */
     public static boolean login(String username, String password) {
-        username = "admin";
-        password = "password123";
+//        username = "admin";
+//        password = "password123";
         try {
             String credentials = new Gson().toJson(new LoginRequest(username, password));
             System.out.println("Credentials: " + credentials);
@@ -60,6 +69,7 @@ public class ServiceUtils {
             AuthResponse authResponse = new Gson().fromJson(jsonResponse, AuthResponse.class);
             if (authResponse != null && authResponse.isOk()) {
                 setToken(authResponse.getToken());
+                setUserId(authResponse.getUserId());
                 return true;
             }
         } catch (Exception e) {
