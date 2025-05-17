@@ -204,8 +204,34 @@ public class AppointmentsViewController {
                 .thenAccept(resp -> {
                     if (resp.isOk()) {
                         Platform.runLater(()->{
-                            System.out.println("Appointments: " + resp.getResult());
+                            System.out.println(resp.getResult().size());
+                            if(resp.getResult().size() >= 8){
+                                if(!resp.getResult().isEmpty()){
+                                    String pdfPath = cbPatient.getValue().getName()+"-appointments.pdf";
+                                    PdfDocument pdf = PDFUtil.createPdfDocument(resp.getResult(), pdfPath);
+                                    if(pdf != null){
+                                        try {
+                                            Gmail service = EmailUtil.getService();
+                                            MimeMessage emailContent = EmailUtil.createEmailWithAttachment(
+                                                    "capitanadri@hotmail.com",
+                                                    "capitanadri12@gmail.com",
+                                                    "Citas de " + cbPatient.getValue().getName(),
+                                                    "Adjunto las citas de " + cbPatient.getValue().getName(),
+                                                    pdfPath
+                                            );
 
+                                            EmailUtil.sendMessage(service,"me", emailContent);
+
+                                        } catch (MessagingException e) {
+                                            throw new RuntimeException(e);
+                                        } catch (IOException e) {
+                                            throw new RuntimeException(e);
+                                        } catch (Exception e) {
+                                            throw new RuntimeException(e);
+                                        }
+                                    }
+                                }
+                            }
                         });
                     } else {
                         // alerta de error
@@ -213,6 +239,12 @@ public class AppointmentsViewController {
                             System.out.println("Error: " + resp.getResult());
                         });
                     }
+                }).exceptionally(ex->{
+                    // alerta de error
+                    Platform.runLater(()->{
+                        System.out.println("Error: " + ex.getMessage());
+                    });
+                    return null;
                 });
 
     }
