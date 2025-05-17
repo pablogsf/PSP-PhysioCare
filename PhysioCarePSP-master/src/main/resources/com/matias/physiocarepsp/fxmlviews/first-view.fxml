@@ -29,11 +29,11 @@
                         <Button fx:id="btnPhysios" onAction="#openPhysiosAction" text="Open" />
                     </HBox>
                     <HBox alignment="CENTER_LEFT" spacing="10.0">
-                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Appointments Management" />
+                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Appointments Calendar" />
                         <Button fx:id="btnAppointments" onAction="#openCalendarAction" text="Open" />
                     </HBox>
                     <HBox alignment="CENTER_LEFT" spacing="10.0">
-                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Appointments Calendar" />
+                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Appointments Management" />
                         <Button fx:id="btnCalendar" onAction="#openAppointmentsAction" text="Open" />
                     </HBox>
                 </VBox>
