@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.matias.physiocarepsp.viewscontroller.FirstViewController">
+<StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.matias.physiocarepsp.viewscontroller.FirstViewController">
     <children>
         <VBox alignment="CENTER" spacing="30.0">
             <padding>
-                <Insets top="40.0" right="40.0" bottom="40.0" left="40.0" />
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
             </padding>
             <HBox alignment="CENTER" spacing="15.0">
                 <VBox alignment="CENTER_LEFT">
-                    <Label text="PhysioCare" style="-fx-font-size: 30px; -fx-font-weight: bold;" />
-                    <Label text=""/>
+                    <Label style="-fx-font-size: 30px; -fx-font-weight: bold;" text="PhysioCare" />
+                    <Label text="" />
                 </VBox>
             </HBox>
             <VBox alignment="CENTER" spacing="20.0">
-                <Label text="Main Menu" style="-fx-font-size: 22px; -fx-font-weight: bold;" />
-                <Label text="Select an option to continue" style="-fx-font-size: 14px;" />
+                <Label style="-fx-font-size: 22px; -fx-font-weight: bold;" text="Main Menu" />
+                <Label style="-fx-font-size: 14px;" text="Select an option to continue" />
                 <VBox spacing="15.0">
                     <HBox alignment="CENTER_LEFT" spacing="10.0">
-                        <Label text="Patients Management" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Patients Management" />
                         <Button fx:id="btnPatients" onAction="#openPatientsAction" text="Open" />
                     </HBox>
                     <HBox alignment="CENTER_LEFT" spacing="10.0">
-                        <Label text="Physios Management" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Physios Management" />
                         <Button fx:id="btnPhysios" onAction="#openPhysiosAction" text="Open" />
                     </HBox>
                     <HBox alignment="CENTER_LEFT" spacing="10.0">
-                        <Label text="Calendario de Citas" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
-                        <Button fx:id="btnCalendar" text="Open" onAction="#openCalendarAction" />
+                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Appointments Management" />
+                        <Button fx:id="btnAppointments" onAction="#openCalendarAction" text="Open" />
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Appointments Calendar" />
+                        <Button fx:id="btnCalendar" onAction="#openAppointmentsAction" text="Open" />
                     </HBox>
                 </VBox>
             </VBox>

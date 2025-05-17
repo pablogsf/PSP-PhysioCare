@@ -3,12 +3,14 @@ package com.matias.physiocarepsp.viewscontroller;
 import com.matias.physiocarepsp.utils.Utils;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 
 /**
  * Controller for the first view of the application.
  * Provides navigation to other views such as Patients and Physios.
  */
 public class FirstViewController {
+
 
     /**
      * Handles the action to open the Patients view.
@@ -41,9 +43,20 @@ public class FirstViewController {
      */
     public void openCalendarAction(ActionEvent event) {
         Node source = (Node) event.getSource();
-//        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/calendar-view.fxml";
-        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/appointments-view.fxml";
+        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/calendar-view.fxml";
         String title = "Calendar | PhysioCare";
+        Utils.switchView(source, fxmlFile, title);
+    }
+
+    /**
+     * Handles the action to open the Appointments view.
+     *
+     * @param event the event triggered by the user
+     */
+    public void openAppointmentsAction(ActionEvent event) {
+        Node source = (Node) event.getSource();
+        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/appointments-view.fxml";
+        String title = "Appointments | PhysioCare";
         Utils.switchView(source, fxmlFile, title);
     }
 }

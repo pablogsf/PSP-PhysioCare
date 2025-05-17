@@ -9,17 +9,18 @@ import com.matias.physiocarepsp.models.Patient.PatientListResponse;
 import com.matias.physiocarepsp.models.Physio.Physio;
 import com.matias.physiocarepsp.models.Physio.PhysioListResponse;
 import com.matias.physiocarepsp.utils.ServiceUtils;
+import com.matias.physiocarepsp.utils.Utils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -37,11 +38,6 @@ public class AppointmentsViewController {
 
     private final ObservableList<Appointment> appointments = FXCollections.observableArrayList();
     private final Gson gson = new Gson();
-    private String physioId;
-
-    public void setPhysioId(String physioId) {
-        this.physioId = physioId;
-    }
 
     @FXML
     public void initialize() {
@@ -54,7 +50,7 @@ public class AppointmentsViewController {
         tblAppointments.setItems(appointments);
         loadPatients();
         loadPhysios();
-        loadAppointments();
+        loadAppointments(); // ahora sí puede usar ServiceUtils.getUserId()
     }
 
     private void loadPatients() {
@@ -77,20 +73,16 @@ public class AppointmentsViewController {
                 });
     }
 
-//    private void loadAppointments() {
-//        ServiceUtils.getResponseAsync(ServiceUtils.SERVER + "/records/appointments", null, "GET")
-//                .thenApply(json -> gson.fromJson(json, AppointmentListResponse.class))
-//                .thenAccept(resp -> appointments.setAll(resp.getAppointments()))
-//                .exceptionally(ex -> {
-//                    LOGGER.log(Level.SEVERE, "Error cargando citas", ex);
-//                    return null;
-//                });
-//    }
-
     private void loadAppointments() {
-        System.out.println("Loading appointments for physio ID: " + physioId);
-        String url = ServiceUtils.SERVER +
-                "/records/physio/" + physioId + "/appointments";
+        String physioId = ServiceUtils.getUserId();
+        if (physioId == null) {
+            LOGGER.warning("No hay usuario logueado, physioId es null");
+            return;
+        }
+
+        String url = ServiceUtils.SERVER + "/records/physio/" + physioId + "/appointments";
+        LOGGER.info("Cargando citas desde: " + url);
+
         ServiceUtils.getResponseAsync(url, null, "GET")
                 .thenAccept(json -> {
                     try {
@@ -111,13 +103,14 @@ public class AppointmentsViewController {
                             a.setDiagnosis(   o.get("diagnosis").getAsString());
                             a.setTreatment(   o.get("treatment").getAsString());
                             a.setObservations(o.get("observations").getAsString());
-                            // si antes añadiste price en tu modelo:
-                            if (o.has("price"))
+                            if (o.has("price")) {
                                 a.setPrice(o.get("price").getAsDouble());
+                            }
                             list.add(a);
                         }
 
                         Platform.runLater(() -> appointments.setAll(list));
+
                     } catch (Exception ex) {
                         LOGGER.log(Level.SEVERE, "Error parseando citas", ex);
                     }
@@ -133,20 +126,27 @@ public class AppointmentsViewController {
         try {
             // 1) Recojo datos de la UI
             LocalDate date = dpDate.getValue();
-            String isoDateTime = LocalDateTime.of(date, LocalTime.now())
-                    .atOffset(ZoneOffset.UTC)
-                    .format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
 
+            // crea un Instant en UTC, truncado a segundos
+            Instant instant = date
+                    .atTime(LocalTime.now())
+                    .atOffset(ZoneOffset.UTC)
+                    .toInstant()
+                    .truncatedTo(ChronoUnit.SECONDS);
+
+            String isoDateTime = instant.toString();
+            // queda algo como "2025-05-30T21:31:49Z"
+
+            // 2) payload igual que antes
             Map<String, Object> payload = getPayloadMap(isoDateTime);
             String body = gson.toJson(payload);
 
-            // Log payload y endpoint
-            LOGGER.info("POST " + ServiceUtils.SERVER + "/appointments");
+            LOGGER.info("POST " + ServiceUtils.SERVER + "/records/appointments");
             LOGGER.info("Payload: " + body);
 
-            // 2) Envío la petición
+            // 3) envío y manejo de la respuesta
             ServiceUtils.getResponseAsync(
-                            ServiceUtils.SERVER + "/appointments",
+                            ServiceUtils.SERVER + "/records/appointments",
                             body,
                             "POST"
                     )
@@ -156,29 +156,28 @@ public class AppointmentsViewController {
                     })
                     .thenAccept(resp -> {
                         if (!resp.isError()) {
-                            LOGGER.info("Cita creada: " + resp.getAppointment());
                             appointments.add(resp.getAppointment());
                         } else {
-                            LOGGER.warning("Error al crear cita: " + resp.getErrorMessage());
                             new Alert(Alert.AlertType.ERROR, resp.getErrorMessage()).showAndWait();
                         }
                     })
                     .exceptionally(ex -> {
-                        LOGGER.log(Level.SEVERE, "Excepción en solicitud de creación de cita", ex);
-                        new Alert(Alert.AlertType.ERROR, "Error enviando petición:\n" + ex.getMessage())
-                                .showAndWait();
+                        LOGGER.log(Level.SEVERE, "Excepción al crear cita", ex);
+                        // muestra también el cuerpo de la excepción
+                        new Alert(Alert.AlertType.ERROR,
+                                "No pude crear cita:\n" + ex.getCause().getMessage()
+                        ).showAndWait();
                         return null;
                     });
 
         } catch (NumberFormatException nfe) {
-            LOGGER.log(Level.WARNING, "Precio inválido: " + txtPrice.getText(), nfe);
             new Alert(Alert.AlertType.ERROR, "Precio inválido").showAndWait();
         }
     }
 
     private Map<String, Object> getPayloadMap(String isoDateTime) {
         String patientId = cbPatient.getValue().getId();
-        String physioId  = cbPhysio.getValue().getId();
+        String physioId  = ServiceUtils.getUserId();  // también lo usas aquí si lo necesitas
         String treatment = txtTreatment.getText();
         double price     = Double.parseDouble(txtPrice.getText());
 
@@ -191,5 +190,17 @@ public class AppointmentsViewController {
         payload.put("observations", "");
         payload.put("price",        price);
         return payload;
+    }
+
+    /**
+     * Handles the action to navigate back to the main view.
+     *
+     * @param actionEvent the event triggered by the back button
+     */
+    public void onBackButtonClick(ActionEvent actionEvent) {
+        Node source = (Node) actionEvent.getSource();
+        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/first-view.fxml";
+        String title = "Welcome | PhysioCare";
+        Utils.switchView(source, fxmlFile, title);
     }
 }

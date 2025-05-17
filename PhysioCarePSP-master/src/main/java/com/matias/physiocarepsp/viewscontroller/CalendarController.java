@@ -4,8 +4,7 @@ import com.calendarfx.model.Calendar;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.model.Entry;
 import com.calendarfx.view.CalendarView;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
 import com.matias.physiocarepsp.models.Appointment.AppointmentListResponse;
 import com.matias.physiocarepsp.utils.LocalDateAdapter;
 import com.matias.physiocarepsp.utils.ServiceUtils;
@@ -20,11 +19,18 @@ import javafx.event.ActionEvent;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static com.matias.physiocarepsp.utils.Utils.showAlert;
 
 public class CalendarController implements Initializable {
+    private static final Logger LOGGER = Logger.getLogger(CalendarController.class.getName());
+
 
     @FXML
     private CalendarView calendarView;
@@ -81,44 +87,102 @@ public class CalendarController implements Initializable {
 //                });
 //    }
 
+//    private void loadAppointments() {
+//        String url = ServiceUtils.SERVER + "/records/appointments";
+//        ServiceUtils.getResponseAsync(url, null, "GET")
+//                .thenApply(json -> {
+//                    System.out.println("JSON Response: " + json);
+//                    return gson.fromJson(json, AppointmentListResponse.class);
+//                })
+//                .thenAccept(response -> {
+//                    if (!response.isError()) {
+//                        Platform.runLater(() -> {
+//                            System.out.println("Appointments loaded successfully");
+//                            citasCalendar.clear(); // limpia entradas anteriores
+//                            response.getAppointments().forEach(a -> {
+//                                // Título del evento
+//                                String title = a.getPatientName() + " – " + a.getDiagnosis();
+//                                Entry<String> entry = new Entry<>(title);
+//
+//                                // Rango de fecha/hora: usamos dateTime y +1h de duración
+//                                LocalDateTime start = a.getDateTime();
+//                                LocalDateTime end = start.plusHours(1);
+//                                entry.setInterval(start, end);
+//
+//                                // No es todo el día
+//                                entry.setFullDay(false);
+//
+//                                citasCalendar.addEntry(entry);
+//                            });
+//                        });
+//                    } else {
+//                        System.out.println("Error: " + response.getErrorMessage());
+//                        showAlert("Error", response.getErrorMessage(), 2);
+//                    }
+//                }).exceptionally(ex -> {
+//                    ex.printStackTrace();
+//                    showAlert("Error", "Failed to fetch appointments", 2);
+//                    return null;
+//                });
+//    }
+
     private void loadAppointments() {
-        String url = ServiceUtils.SERVER + "/records/appointments";
+        String physioId = ServiceUtils.getUserId();
+        if (physioId == null) {
+            System.out.println("No hay usuario logueado, physioId es null");
+            return;
+        }
+
+        String url = ServiceUtils.SERVER + "/records/physio/" + physioId + "/appointments";
+        System.out.println("Cargando citas desde: " + url);
+
         ServiceUtils.getResponseAsync(url, null, "GET")
-                .thenApply(json -> {
-                    System.out.println("JSON Response: " + json);
-                    return gson.fromJson(json, AppointmentListResponse.class);
-                })
-                .thenAccept(response -> {
-                    if (!response.isError()) {
+                .thenAccept(json -> {
+                    try {
+                        JsonObject root = JsonParser.parseString(json).getAsJsonObject();
+                        JsonArray arr   = root.getAsJsonArray("result");
+
+                        // Preparamos las entradas en una lista temporal
+                        List<Entry<String>> entries = new ArrayList<>();
+                        for (JsonElement je : arr) {
+                            JsonObject o = je.getAsJsonObject();
+                            String title = o.get("patientName").getAsString()
+                                    + " – " + o.get("diagnosis").getAsString();
+
+                            Entry<String> e = new Entry<>(title);
+                            LocalDateTime start = LocalDateTime.parse(
+                                    o.get("date").getAsString(),
+                                    DateTimeFormatter.ISO_OFFSET_DATE_TIME
+                            );
+                            e.setInterval(start, start.plusHours(1));
+                            e.setFullDay(false);
+                            entries.add(e);
+                        }
+
+                        // Actualizamos el calendario en el hilo de JavaFX
                         Platform.runLater(() -> {
-                            System.out.println("Appointments loaded successfully");
-                            citasCalendar.clear(); // limpia entradas anteriores
-                            response.getAppointments().forEach(a -> {
-                                // Título del evento
-                                String title = a.getPatientName() + " – " + a.getDiagnosis();
-                                Entry<String> entry = new Entry<>(title);
-
-                                // Rango de fecha/hora: usamos dateTime y +1h de duración
-                                LocalDateTime start = a.getDateTime();
-                                LocalDateTime end = start.plusHours(1);
-                                entry.setInterval(start, end);
-
-                                // No es todo el día
-                                entry.setFullDay(false);
-
-                                citasCalendar.addEntry(entry);
-                            });
+                            citasCalendar.clear();
+                            for (Entry<String> e : entries) {
+                                citasCalendar.addEntry(e);
+                            }
                         });
-                    } else {
-                        System.out.println("Error: " + response.getErrorMessage());
-                        showAlert("Error", response.getErrorMessage(), 2);
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        Platform.runLater(() ->
+                                Utils.showAlert("Error", "No se pudieron parsear las citas", 2)
+                        );
                     }
-                }).exceptionally(ex -> {
+                })
+                .exceptionally(ex -> {
                     ex.printStackTrace();
-                    showAlert("Error", "Failed to fetch appointments", 2);
+                    Platform.runLater(() ->
+                            Utils.showAlert("Error", "No se pudieron cargar las citas", 2)
+                    );
                     return null;
                 });
     }
+
 
 
 

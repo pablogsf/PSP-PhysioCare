@@ -44,6 +44,8 @@
             <Label text="Precio" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
             <TextField fx:id="txtPrice" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
             <Button text="Agregar" onAction="#onAddAppointment" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+            <Button text="Volver al Menú" onAction="#onBackButtonClick" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
         </GridPane>
     </bottom>
+
 </BorderPane>
