@@ -111,7 +111,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                org.example.emailprojectjavafx/org.example.emailprojectjavafx.EmailSenderApplication
+                                com.matias.physiocarepsp/com.matias.physiocarepsp
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
