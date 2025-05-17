@@ -196,13 +196,15 @@ public class AppointmentsViewController {
                         } else {
                             Platform.runLater(() ->
                                     showAlert("Error", resp.getErrorMessage(), 2)
+
                             );
                         }
                     })
                     .exceptionally(ex -> {
-                        Platform.runLater(() ->
-                                showAlert("Error", "Error al crear cita", 2)
-                        );
+                        Platform.runLater(() -> {
+                            showAlert("Error", "Error al crear cita", 2);
+                            System.out.println("Error: " + ex.getMessage());
+                        });
                         return null;
                     });
 
@@ -216,7 +218,7 @@ public class AppointmentsViewController {
                     if (resp.isOk()) {
                         Platform.runLater(()->{
                             System.out.println(resp.getResult().size());
-                            if(resp.getResult().size() >= 8){
+                            if(resp.getResult().size() < 8){
                                 if(!resp.getResult().isEmpty()){
                                     String pdfPath = cbPatient.getValue().getName()+"-appointments.pdf";
                                     PdfDocument pdf = PDFUtil.createPdfDocument(resp.getResult(), pdfPath);
