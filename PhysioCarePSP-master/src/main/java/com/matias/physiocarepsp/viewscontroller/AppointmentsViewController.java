@@ -10,6 +10,7 @@ import com.matias.physiocarepsp.models.Physio.Physio;
 import com.matias.physiocarepsp.models.Physio.PhysioListResponse;
 import com.matias.physiocarepsp.utils.ServiceUtils;
 import com.matias.physiocarepsp.utils.Utils;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -67,7 +68,7 @@ public class AppointmentsViewController {
 
     @FXML
     public void onAddAppointment() {
-        Appointment a = new Appointment();
+        /*Appointment a = new Appointment();
         LocalDate date = dpDate.getValue();
         a.setDateTime(LocalDateTime.of(date, LocalTime.now()));
         a.setPatientId(cbPatient.getValue().getId());
@@ -83,15 +84,20 @@ public class AppointmentsViewController {
                     } else {
                         // alerta de error
                     }
-                });
-
+                });*/
+        System.out.println(cbPatient.getValue().getId());
         ServiceUtils.getResponseAsync(ServiceUtils.SERVER +"/records/"+cbPatient.getValue().getId()+"/appointments", null, "GET")
                 .thenApply(json -> gson.fromJson(json, AppointmentListResponse.class))
                 .thenAccept(resp -> {
                     if (!resp.isError()) {
-                        System.out.println("Appointments: " + resp.getAppointments());
+                        Platform.runLater(()->{
+                            System.out.println("Appointments: " + resp.getAppointments());
+                        });
                     } else {
                         // alerta de error
+                        Platform.runLater(()->{
+                            System.out.println("Error: " + resp.getErrorMessage());
+                        });
                     }
                 });
     }
