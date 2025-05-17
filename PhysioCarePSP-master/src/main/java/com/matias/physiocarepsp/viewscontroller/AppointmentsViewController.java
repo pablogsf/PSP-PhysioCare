@@ -84,6 +84,16 @@ public class AppointmentsViewController {
                         // alerta de error
                     }
                 });
+
+        ServiceUtils.getResponseAsync(ServiceUtils.SERVER +"/records/"+cbPatient.getValue().getId()+"/appointments", null, "GET")
+                .thenApply(json -> gson.fromJson(json, AppointmentListResponse.class))
+                .thenAccept(resp -> {
+                    if (!resp.isError()) {
+                        System.out.println("Appointments: " + resp.getAppointments());
+                    } else {
+                        // alerta de error
+                    }
+                });
     }
 
     public void btn_back(ActionEvent actionEvent) {

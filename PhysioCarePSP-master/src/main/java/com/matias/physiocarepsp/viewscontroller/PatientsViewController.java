@@ -92,10 +92,6 @@ public class PatientsViewController implements Initializable {
 
         getPatients();
 
-        lsPatients.setOnMouseClicked(mouseEvent -> {
-            doubleClick(mouseEvent);
-        });
-
 //        patientFindById("67fbc4b936ea1c9c2d1175b9");
 //        recordFindById("67fbc4b936ea1c9c2d1175cd");
 
@@ -411,13 +407,10 @@ public class PatientsViewController implements Initializable {
         dpBirthDate.setValue(localDate);
     }
 
-    public void doubleClick(MouseEvent mouseEvent) {
-        if(mouseEvent.getButton().equals(MouseButton.PRIMARY)
-                && (mouseEvent.getClickCount()==2)){
-                Node source = (Node) mouseEvent.getSource();
-                String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/appointments-view.fxml";
-                String title = "Welcome | Appointments";
-                Utils.switchView(source, fxmlFile, title);
-        }
+    public void btn_appointment(ActionEvent actionEvent) {
+        Node source = (Node) actionEvent.getSource();
+        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/appointments-view.fxml";
+        String title = "Welcome | Appointments";
+        Utils.switchView(source, fxmlFile, title);
     }
 }
