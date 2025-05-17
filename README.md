@@ -64,25 +64,52 @@
 
 <h2 id="project-structure">📂 Project Structure</h2>
 <pre><code>
-PSP-PhysioCare/
-├── PhysioCarePSP-master/
-│   ├── .mvn/…
-│   ├── mvnw*, mvnw.cmd
-│   ├── pom.xml
-│   ├── src/
-│   │   └── main/
-│   │       ├── java/com/matias/physiocarepsp/
-│   │       │   ├── MainApplication.java
-│   │       │   ├── utils/               &lt;!-- ServiceUtils, Utils for HTTP & view management --&gt;
-│   │       │   ├── models/              &lt;!-- Patient, Physio, Appointment, etc. --&gt;
-│   │       │   └── viewscontroller/     &lt;!-- JavaFX controllers for each FXML --&gt;
-│   │       └── resources/com/matias/physiocarepsp/fxmlviews/
-│   │           ├── login-view.fxml
-│   │           ├── first-view.fxml
-│   │           ├── patients-view.fxml
-│   │           └── physios-view.fxml
-│   └── .gitignore
-└── README.md
+src/main/java
+├── com
+│   └── matias
+│       └── physiocarepsp
+│           ├── MainApplication.java
+│           ├── models
+│           │   ├── Appointment
+│           │   │   ├── AppointmentDto.java
+│           │   │   ├── Appointment.java
+│           │   │   ├── AppointmentListDto.java
+│           │   │   ├── AppointmentListResponse.java
+│           │   │   ├── AppointmentRequest.java
+│           │   │   └── AppointmentResponse.java
+│           │   ├── Auth
+│           │   │   ├── AuthResponse.java
+│           │   │   └── LoginRequest.java
+│           │   ├── BaseResponse.java
+│           │   ├── Patient
+│           │   │   ├── Patient.java
+│           │   │   ├── PatientListResponse.java
+│           │   │   └── PatientResponse.java
+│           │   ├── Physio
+│           │   │   ├── Physio.java
+│           │   │   ├── PhysioListResponse.java
+│           │   │   └── PhysioResponse.java
+│           │   └── Record
+│           │       ├── Record.java
+│           │       ├── RecordListResponse.java
+│           │       └── RecordResponse.java
+│           ├── utils
+│           │   ├── AppointmentService.java
+│           │   ├── EmailUtil.java
+│           │   ├── LocalDateAdapter.java
+│           │   ├── PDFUtil.java
+│           │   ├── ServiceUtils.java
+│           │   ├── SftpUploader.java
+│           │   └── Utils.java
+│           └── viewscontroller
+│               ├── AppointmentsViewController.java
+│               ├── CalendarController.java
+│               ├── FirstViewController.java
+│               ├── LoginViewController.java
+│               ├── PatientsViewController.java
+│               └── PhysiosViewController.java
+└── module-info.java
+
 </code></pre>
 
 <hr>
