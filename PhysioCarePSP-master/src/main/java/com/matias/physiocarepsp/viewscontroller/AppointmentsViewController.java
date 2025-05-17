@@ -218,7 +218,7 @@ public class AppointmentsViewController {
                     if (resp.isOk()) {
                         Platform.runLater(()->{
                             System.out.println(resp.getResult().size());
-                            if(resp.getResult().size() < 8){
+                            if(resp.getResult().size() >= 8){
                                 if(!resp.getResult().isEmpty()){
                                     String pdfPath = cbPatient.getValue().getName()+"-appointments.pdf";
                                     PdfDocument pdf = PDFUtil.createPdfDocument(resp.getResult(), pdfPath);
@@ -228,8 +228,8 @@ public class AppointmentsViewController {
                                             MimeMessage emailContent = EmailUtil.createEmailWithAttachment(
                                                     "capitanadri@hotmail.com",
                                                     "capitanadri12@gmail.com",
-                                                    "Citas de " + cbPatient.getValue().getName(),
-                                                    "Adjunto las citas de " + cbPatient.getValue().getName(),
+                                                    "Appointments " + cbPatient.getValue().getName(),
+                                                    "You have 2 appointments left: " + cbPatient.getValue().getName(),
                                                     pdfPath
                                             );
 
