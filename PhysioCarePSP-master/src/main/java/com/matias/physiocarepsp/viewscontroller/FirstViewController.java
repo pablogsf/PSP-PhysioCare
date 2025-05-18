@@ -138,4 +138,10 @@ public class FirstViewController {
                 });
     }
 
+    public void logout(ActionEvent actionEvent) {
+        Node source = (Node) actionEvent.getSource();
+        String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/login-view.fxml";
+        String title = "Login | PhysioCare";
+        Utils.switchView(source, fxmlFile, title);
+    }
 }
