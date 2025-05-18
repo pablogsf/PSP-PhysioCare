@@ -67,52 +67,63 @@
 
 <h2 id="project-structure">📂 Project Structure</h2>
 <pre><code>
-src/main/java
-├── com
-│   └── matias
-│       └── physiocarepsp
-│           ├── MainApplication.java
-│           ├── models
-│           │   ├── Appointment
-│           │   │   ├── AppointmentDto.java
-│           │   │   ├── AppointmentDtoResponse.java
-│           │   │   ├── Appointment.java
-│           │   │   ├── AppointmentListDto.java
-│           │   │   ├── AppointmentListResponse.java
-│           │   │   └── AppointmentResponse.java
-│           │   ├── Auth
-│           │   │   ├── AuthResponse.java
-│           │   │   └── LoginRequest.java
-│           │   ├── BaseResponse.java
-│           │   ├── Patient
-│           │   │   ├── Patient.java
-│           │   │   ├── PatientListResponse.java
-│           │   │   └── PatientResponse.java
-│           │   ├── Physio
-│           │   │   ├── Physio.java
-│           │   │   ├── PhysioListResponse.java
-│           │   │   └── PhysioResponse.java
-│           │   └── Record
-│           │       ├── Record.java
-│           │       ├── RecordListResponse.java
-│           │       └── RecordResponse.java
-│           ├── utils
-│           │   ├── AppointmentService.java
-│           │   ├── EmailUtil.java
-│           │   ├── LocalDateAdapter.java
-│           │   ├── PDFUtil.java
-│           │   ├── ServiceUtils.java
-│           │   ├── SftpUploader.java
-│           │   └── Utils.java
-│           └── viewscontroller
-│               ├── AppointmentsViewController.java
-│               ├── CalendarController.java
-│               ├── FirstViewController.java
-│               ├── LoginViewController.java
-│               ├── PatientsViewController.java
-│               └── PhysiosViewController.java
-└── module-info.java
-
+src/main
+├── java
+│   ├── com
+│   │   └── matias
+│   │       └── physiocarepsp
+│   │           ├── MainApplication.java
+│   │           ├── models
+│   │           │   ├── Appointment
+│   │           │   │   ├── AppointmentDto.java
+│   │           │   │   ├── AppointmentDtoResponse.java
+│   │           │   │   ├── Appointment.java
+│   │           │   │   ├── AppointmentListDto.java
+│   │           │   │   ├── AppointmentListResponse.java
+│   │           │   │   └── AppointmentResponse.java
+│   │           │   ├── Auth
+│   │           │   │   ├── AuthResponse.java
+│   │           │   │   └── LoginRequest.java
+│   │           │   ├── BaseResponse.java
+│   │           │   ├── Patient
+│   │           │   │   ├── Patient.java
+│   │           │   │   ├── PatientListResponse.java
+│   │           │   │   └── PatientResponse.java
+│   │           │   ├── Physio
+│   │           │   │   ├── Physio.java
+│   │           │   │   ├── PhysioListResponse.java
+│   │           │   │   └── PhysioResponse.java
+│   │           │   └── Record
+│   │           │       ├── Record.java
+│   │           │       ├── RecordListResponse.java
+│   │           │       └── RecordResponse.java
+│   │           ├── utils
+│   │           │   ├── AppointmentService.java
+│   │           │   ├── EmailUtil.java
+│   │           │   ├── LocalDateAdapter.java
+│   │           │   ├── PDFUtil.java
+│   │           │   ├── ServiceUtils.java
+│   │           │   ├── SftpUploader.java
+│   │           │   └── Utils.java
+│   │           └── viewscontroller
+│   │               ├── AppointmentsViewController.java
+│   │               ├── CalendarController.java
+│   │               ├── FirstViewController.java
+│   │               ├── LoginViewController.java
+│   │               ├── PatientsViewController.java
+│   │               └── PhysiosViewController.java
+│   └── module-info.java
+└── resources
+    └── com
+        └── matias
+            └── physiocarepsp
+                └── fxmlviews
+                    ├── appointments-view.fxml
+                    ├── calendar-view.fxml
+                    ├── first-view.fxml
+                    ├── login-view.fxml
+                    ├── patients-view.fxml
+                    └── physios-view.fxml
 
 </code></pre>
 
