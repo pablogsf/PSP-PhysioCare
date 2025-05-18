@@ -12,6 +12,7 @@ import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
 import com.matias.physiocarepsp.models.Appointment.Appointment;
 import com.matias.physiocarepsp.models.Appointment.AppointmentDto;
+import com.matias.physiocarepsp.models.Record.Record;
 
 import java.io.ByteArrayOutputStream;
 import java.time.ZonedDateTime;
@@ -193,5 +194,37 @@ public class PDFUtil {
         } catch (Exception e) {
             return isoDateString;
         }
+    }
+
+    public static PdfDocument createRecordPdf(List<Record> records, String dest){
+        try {
+            PdfWriter writer = new PdfWriter(dest);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            float[] columnWidths = {5f, 5f, 5f};
+            Table table = new Table(UnitValue.createPercentArray(columnWidths));
+            table.setWidth(UnitValue.createPercentValue(100));
+
+            // Encabezados
+            table.addCell(createHeaderCell( "ID Record"));
+            table.addCell(createHeaderCell( "ID Paciente"));
+            table.addCell(createHeaderCell( "Medical Record"));
+
+            for (Record appt : records) {
+                table.addCell(createWrappedCell(safeString(appt.getId())));
+                table.addCell(createWrappedCell(safeString(appt.getPatient())));
+                table.addCell(createWrappedCell(safeString(formatIsoDate(appt.getMedicalRecord()))));
+            }
+
+            document.add(table);
+            document.close();
+            System.out.println("Records PDF creado en: " + dest);
+            return pdf;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

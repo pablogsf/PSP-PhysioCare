@@ -1,15 +1,46 @@
 package com.matias.physiocarepsp.viewscontroller;
 
+import com.google.gson.*;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.matias.physiocarepsp.models.Record.RecordListResponse;
+import com.matias.physiocarepsp.utils.LocalDateAdapter;
+import com.matias.physiocarepsp.utils.PDFUtil;
+import com.matias.physiocarepsp.utils.ServiceUtils;
 import com.matias.physiocarepsp.utils.Utils;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+
+import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import static com.matias.physiocarepsp.utils.Utils.showAlert;
 
 /**
  * Controller for the first view of the application.
  * Provides navigation to other views such as Patients and Physios.
  */
 public class FirstViewController {
+
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
+                @Override
+                public LocalDateTime deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+                        throws JsonParseException {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+                    return LocalDateTime.parse(json.getAsString(), formatter);
+                }
+            })
+            .registerTypeAdapter(LocalDateTime.class, new JsonSerializer<LocalDateTime>() {
+                @Override
+                public JsonElement serialize(LocalDateTime src, java.lang.reflect.Type typeOfSrc, JsonSerializationContext context) {
+                    return new JsonPrimitive(src.toString()); // ISO 8601 format
+                }
+            })
+            .create();
 
 
     /**
@@ -58,5 +89,33 @@ public class FirstViewController {
         String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/appointments-view.fxml";
         String title = "Appointments | PhysioCare";
         Utils.switchView(source, fxmlFile, title);
+    }
+
+    public void btn_SaveAction(ActionEvent actionEvent) {
+        String url = ServiceUtils.SERVER + "/records/";
+        ServiceUtils.getResponseAsync(url, null, "GET")
+                .thenApply(json -> gson.fromJson(json, RecordListResponse.class))
+                .thenAccept(response -> {
+                    if (!response.isError()) {
+                        Platform.runLater(() -> {
+                            PdfDocument pdf = PDFUtil.createRecordPdf(response.getRecords(), "Records.pdf");
+                            if (pdf != null) {
+                                showAlert("Success", "PDF generated successfully!", 1);
+                                //Falta añadir el upload que es la funcion SftpUploader.upload
+
+
+                            } else {
+                                showAlert("Error", "Failed to generate PDF.", 2);
+                            }
+                        });
+                    } else {
+                        Platform.runLater(() -> showAlert("Error", response.getErrorMessage(), 2));
+                    }
+                })
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    Platform.runLater(() -> showAlert("Error", "Failed to fetch records: " + ex.getMessage(), 2));
+                    return null;
+                });
     }
 }
