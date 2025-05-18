@@ -38,16 +38,7 @@ public class ServiceUtils {
         return token;
     }
 
-    /**
-     * Removes the authentication token.
-     */
-    public static void removeToken() {
-        ServiceUtils.token = null;
-    }
-
     public static String getUserId() { return userId; }
-
-    public static void removeUserId() { ServiceUtils.userId = null;}
 
     /**
      * Logs in the user by sending a POST request with the provided credentials.
@@ -76,6 +67,14 @@ public class ServiceUtils {
             System.out.println("WRONG LOGIN");
         }
         return false;
+    }
+
+    /**
+     * Removes the authentication token and logouts the user.
+     */
+    public static void logout() {
+        ServiceUtils.token = null;
+        ServiceUtils.userId = null;
     }
 
     /**

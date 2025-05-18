@@ -5,45 +5,92 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.matias.physiocarepsp.viewscontroller.LoginViewController">
+<StackPane style="-fx-background-color: linear-gradient(to bottom right, #F0F6FF, #E1EAFF);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.matias.physiocarepsp.viewscontroller.LoginViewController">
     <children>
-        <VBox alignment="CENTER" maxWidth="500.0" spacing="30.0">
+        <VBox alignment="CENTER" maxWidth="500.0" spacing="20.0" styleClass="main-container">
             <padding>
-                <Insets top="40.0" right="40.0" bottom="40.0" left="40.0"/>
+                <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
             </padding>
+
+            <!-- Logo y título -->
             <HBox alignment="CENTER" spacing="15.0">
                 <children>
+                    <Circle fill="#4285F4" radius="25">
+                        <effect>
+                            <DropShadow color="#00000033" offsetX="0.0" offsetY="2.0" radius="5.0" />
+                        </effect>
+                    </Circle>
                     <VBox alignment="CENTER_LEFT">
-                        <Label text="PhysioCare" style="-fx-font-size: 30px; -fx-font-weight: bold;"/>
+                        <Label style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="PhysioCare">
+                            <font>
+                                <Font name="System Bold" size="32.0" />
+                            </font>
+                        </Label>
+                        <Label style="-fx-font-size: 14px; -fx-text-fill: #676E7D;" text="Professional Healthcare System" />
                     </VBox>
                 </children>
             </HBox>
-            <VBox alignment="CENTER" spacing="20.0" style="-fx-background-color: white;">
+
+            <!-- Formulario de login -->
+            <VBox alignment="CENTER" spacing="25.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;">
+                <effect>
+                    <DropShadow color="#0000001A" offsetX="0.0" offsetY="5.0" radius="10.0" />
+                </effect>
                 <padding>
-                    <Insets top="30.0" right="30.0" bottom="30.0" left="30.0"/>
+                    <Insets bottom="35.0" left="40.0" right="40.0" top="35.0" />
                 </padding>
                 <children>
-                    <Label text="Welcome" style="-fx-font-size: 22px; -fx-font-weight: bold;"/>
-                    <Label text="Please enter your credentials" style="-fx-font-size: 14px;"/>
-                    <Region prefHeight="30.0"/>
-                    <VBox alignment="CENTER" spacing="15.0">
+                    <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="¡Bienvenido de nuevo!">
+                        <font>
+                            <Font name="System Bold" size="24.0" />
+                        </font>
+                    </Label>
+                    <Label style="-fx-font-size: 14px; -fx-text-fill: #676E7D;" text="Por favor ingresa tus credenciales para continuar" />
+
+                    <Region prefHeight="15.0" />
+
+                    <VBox alignment="CENTER" spacing="20.0">
                         <children>
-                            <TextField fx:id="txtUsername" promptText="Username" prefWidth="300.0"
-                                       style="-fx-border-color: gray; -fx-background-radius: 5; -fx-border-radius: 5;"/>
-                            <PasswordField fx:id="txtPassword" promptText="Password" prefWidth="300.0"
-                                           style="-fx-border-color: gray; -fx-background-radius: 5; -fx-border-radius: 5;"/>
-                            <Button fx:id="btnLogin" text="Login" onAction="#onLogin" prefWidth="300.0"
-                                    style="-fx-font-weight: bold;"/>
-                            <Label fx:id="lblError" text="" visible="false" style="-fx-font-size: 12px;"/>
+                            <VBox spacing="8.0">
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #676E7D;" text="Usuario" />
+                                <TextField fx:id="txtUsername" prefHeight="40.0" prefWidth="300.0" promptText="Ingresa tu nombre de usuario" style="-fx-background-color: #F7F9FC; -fx-border-color: #E5E9F2; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 8;" />
+                            </VBox>
+
+                            <VBox spacing="8.0">
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #676E7D;" text="Contraseña" />
+                                <PasswordField fx:id="txtPassword" prefHeight="40.0" prefWidth="300.0" promptText="Ingresa tu contraseña" style="-fx-background-color: #F7F9FC; -fx-border-color: #E5E9F2; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 8;" />
+                            </VBox>
+
+                            <HBox alignment="CENTER_RIGHT" />
+
+                            <Button fx:id="btnLogin" onAction="#onLogin" prefHeight="40.0" prefWidth="300.0" style="-fx-background-color: linear-gradient(to right, #4285F4, #5C9AFF); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Iniciar Sesión">
+                                <effect>
+                                    <DropShadow color="#4285F466" offsetX="0.0" offsetY="3.0" radius="5.0" />
+                                </effect>
+                            </Button>
+
+                            <Label fx:id="lblError" style="-fx-font-size: 12px; -fx-text-fill: #E53935;" text="" visible="false" />
                         </children>
                     </VBox>
                 </children>
             </VBox>
+
+            <HBox alignment="CENTER" spacing="5.0">
+                <padding>
+                    <Insets top="10.0" />
+                </padding>
+                <children>
+                    <Label style="-fx-font-size: 12px; -fx-text-fill: #676E7D;" text="© 2025 PhysioCare - Todos los derechos reservados" />
+                </children>
+            </HBox>
         </VBox>
     </children>
 </StackPane>

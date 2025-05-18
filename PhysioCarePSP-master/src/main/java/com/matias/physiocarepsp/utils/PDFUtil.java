@@ -84,39 +84,42 @@ public class PDFUtil {
     /**
      * Generates a PDF with a salary report for a physiotherapist: "Fecha | Paciente | Tratamiento | Precio" table and total.
      */
-    public static byte[] generateSalaryPdf(String physioName, List<Appointment> appointments) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfWriter writer = new PdfWriter(baos);
-        PdfDocument pdf = new PdfDocument(writer);
-        Document document = new Document(pdf);
+    public static PdfDocument generateSalaryPdf(String physioName, List<AppointmentDto> appointments,  String destino) {
+        try{
+            PdfWriter writer = new PdfWriter(destino);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
 
-        // Header
-        document.add(new Paragraph(CLINIC_NAME).setBold());
-        document.add(new Paragraph(CLINIC_ADDRESS));
-        document.add(new Paragraph("Nómina de: " + physioName).setBold().setFontSize(14));
-        document.add(new Paragraph(" "));
+            document.add(new Paragraph(CLINIC_NAME).setBold());
+            document.add(new Paragraph(CLINIC_ADDRESS));
+            document.add(new Paragraph("Nómina de: " + physioName).setBold().setFontSize(14));
+            document.add(new Paragraph(" "));
 
-        // Table with four columns: Fecha | Paciente | Tratamiento | Precio
-        float[] columnWidths = {3, 5, 4, 3};
-        Table table = new Table(UnitValue.createPercentArray(columnWidths)).useAllAvailableWidth();
-        table.addHeaderCell("Fecha");
-        table.addHeaderCell("Paciente");
-        table.addHeaderCell("Tratamiento");
-        table.addHeaderCell("Precio");
+            // Table with four columns: Fecha | Paciente | Tratamiento | Precio
+            float[] columnWidths = {3, 5, 4, 3};
+            Table table = new Table(UnitValue.createPercentArray(columnWidths)).useAllAvailableWidth();
+            table.addHeaderCell("Fecha");
+            table.addHeaderCell("Paciente");
+            table.addHeaderCell("Tratamiento");
+            table.addHeaderCell("Precio");
 
-        double total = 0;
-        for (Appointment a : appointments) {
-            table.addCell(a.getDateTime().format(DATE_FORMAT));
-            table.addCell(a.getPatientName());
-            table.addCell(a.getTreatment());
-            table.addCell(String.format("%.2f", a.getPrice()));
-            total += a.getPrice();
+            double total = 0;
+            for (AppointmentDto a : appointments) {
+                table.addCell(a.getDate());
+                table.addCell(a.getPatientName());
+                table.addCell(a.getTreatment());
+                table.addCell(String.format("%.2f", a.getPrice()));
+                total += a.getPrice();
+            }
+
+            document.add(table);
+            document.add(new Paragraph("\nTotal a recibir: " + String.format("%.2f", total)).setBold().setFontSize(12));
+            document.close();
+            return pdf;
+        }catch(Exception e){
+            e.printStackTrace();
         }
-
-        document.add(table);
-        document.add(new Paragraph("\nTotal a recibir: " + String.format("%.2f", total)).setBold().setFontSize(12));
-        document.close();
-        return baos.toByteArray();
+        return null;
     }
 
     public static PdfDocument createPdfDocument(List<AppointmentDto> appointments, String dest) {
