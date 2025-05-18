@@ -133,8 +133,8 @@ public class PDFUtil {
             table.addCell("Precio (€)");
 
             for (AppointmentDto appt : appointments) {
-                table.addCell(safeString(appt.getId()));
-                table.addCell(safeString(appt.getPhysioName()));
+                table.addCell(safeString(appt.getAppointmentId()));
+                table.addCell(safeString(appt.getPhysioId()));
                 table.addCell(safeString(appt.getDate()));
                 table.addCell(safeString(appt.getDiagnosis()));
                 table.addCell(safeString(appt.getTreatment()));

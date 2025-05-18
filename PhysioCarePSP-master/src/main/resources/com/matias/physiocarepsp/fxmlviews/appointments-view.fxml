@@ -1,50 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 
 <?import javafx.geometry.Insets?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.matias.physiocarepsp.viewscontroller.AppointmentsViewController">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="com.matias.physiocarepsp.viewscontroller.AppointmentsViewController">
     <top>
-        <Label text="Gestión de Citas" style="-fx-font-size:18px; -fx-padding:10"/>
+        <Label style="-fx-font-size:18px; -fx-padding:10" text="Gestión de Citas" />
     </top>
     <center>
         <TableView fx:id="tblAppointments" prefHeight="300">
             <columns>
-                <TableColumn text="Fecha" fx:id="colDate"/>
-                <TableColumn text="Paciente" fx:id="colPatient"/>
-                <TableColumn text="Fisio" fx:id="colPhysio"/>
-                <TableColumn text="Tratamiento" fx:id="colTreatment"/>
-                <TableColumn text="Precio" fx:id="colPrice"/>
+                <TableColumn fx:id="colDate" text="Fecha" />
+                <TableColumn fx:id="colPatient" text="Paciente" />
+                <TableColumn fx:id="colPhysio" text="Fisio" />
+                <TableColumn fx:id="colTreatment" text="Tratamiento" />
+                <TableColumn fx:id="colPrice" text="Precio" />
             </columns>
         </TableView>
     </center>
     <bottom>
-        <GridPane hgap="10" vgap="10">
+        <GridPane hgap="10" prefHeight="264.0" prefWidth="614.0" vgap="10">
             <padding>
-                <Insets top="10" right="10" bottom="10" left="10"/>
+                <Insets bottom="10" left="10" right="10" top="10" />
             </padding>
             <columnConstraints>
-                <ColumnConstraints percentWidth="25"/>
-                <ColumnConstraints percentWidth="75"/>
+                <ColumnConstraints percentWidth="25" />
+                <ColumnConstraints percentWidth="75" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints vgrow="NEVER"/>
-                <RowConstraints vgrow="NEVER"/>
-                <RowConstraints vgrow="NEVER"/>
+                <RowConstraints vgrow="NEVER" />
+                <RowConstraints vgrow="NEVER" />
+                <RowConstraints vgrow="NEVER" />
+            <RowConstraints />
+            <RowConstraints maxHeight="30.0" minHeight="28.0" prefHeight="28.0" />
+            <RowConstraints maxHeight="22.0" minHeight="20.0" prefHeight="22.0" />
+            <RowConstraints maxHeight="22.0" minHeight="20.0" prefHeight="22.0" />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" />
             </rowConstraints>
 
-            <Label text="Fecha y hora" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-            <DatePicker fx:id="dpDate" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
-            <Label text="Paciente" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-            <ComboBox fx:id="cbPatient" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-            <Label text="Fisioterapeuta" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-            <ComboBox fx:id="cbPhysio" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-            <Label text="Tratamiento" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtTreatment" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-            <Label text="Precio" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtPrice" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-            <Button text="Agregar" onAction="#onAddAppointment" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-            <Button text="Volver al Menú" onAction="#onBackButtonClick" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+            <Label text="Fecha y hora" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+            <DatePicker fx:id="dpDate" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+            <Label text="Paciente" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+            <ComboBox fx:id="cbPatient" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Fisioterapeuta" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+            <ComboBox fx:id="cbPhysio" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Tratamiento" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+            <TextField fx:id="txtTreatment" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label text="Precio" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+            <TextField fx:id="txtPrice" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Button onAction="#onAddAppointment" text="Agregar" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <Button onAction="#onBackButtonClick" text="Volver al Menú" GridPane.columnIndex="1" GridPane.rowIndex="8">
+            <GridPane.margin>
+               <Insets left="70.0" />
+            </GridPane.margin></Button>
+         <Label text="Diagnostico" GridPane.rowIndex="5" />
+         <TextField fx:id="txtDiagnosis" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+         <Label text="Observaciones" GridPane.rowIndex="6" />
+         <TextField fx:id="txtObservation" GridPane.columnIndex="1" GridPane.rowIndex="6">
+            <GridPane.margin>
+               <Insets />
+            </GridPane.margin>
+         </TextField>
         </GridPane>
     </bottom>
 

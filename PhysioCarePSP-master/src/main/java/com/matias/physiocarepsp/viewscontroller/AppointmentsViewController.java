@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 import static com.matias.physiocarepsp.utils.Utils.showAlert;
 
 public class AppointmentsViewController {
+
     @FXML private TableView<Appointment> tblAppointments;
     @FXML private TableColumn<Appointment, String> colDate;
     @FXML private TableColumn<Appointment, String> colPatient;
@@ -53,7 +54,7 @@ public class AppointmentsViewController {
     @FXML private DatePicker dpDate;
     @FXML private ComboBox<Patient> cbPatient;
     @FXML private ComboBox<Physio> cbPhysio;
-    @FXML private TextField txtTreatment, txtPrice;
+    @FXML private TextField txtTreatment, txtPrice, txtDiagnosis, txtObservation;
 
     private final ObservableList<Appointment> appointments = FXCollections.observableArrayList();
     private final Gson gson = new Gson();
@@ -90,6 +91,16 @@ public class AppointmentsViewController {
         );
 
         tblAppointments.setItems(appointments);
+
+        dpDate.valueProperty().addListener((obs, oldDate, newDate) -> {
+            if(newDate != null && newDate.isAfter(LocalDate.now())) {
+                txtObservation.setDisable(true);
+                txtDiagnosis.setDisable(true);
+            }else{
+                txtObservation.setDisable(false);
+                txtDiagnosis.setDisable(false);
+            }
+        });
 
         loadPatients();
         loadPhysios();
@@ -178,47 +189,57 @@ public class AppointmentsViewController {
             payload.put("physio",       ServiceUtils.getUserId());
             payload.put("date",         isoDateTime);
             payload.put("treatment",    txtTreatment.getText());
-            payload.put("diagnosis",    "");
-            payload.put("observations", "");
+            payload.put("diagnosis",    txtDiagnosis.getText() == null ? "por determinar en cita" : txtDiagnosis.getText());
+            payload.put("observations", txtObservation.getText() == null ? "por determinar en cita" : txtObservation.getText());
             payload.put("price",        Double.parseDouble(txtPrice.getText()));
 
             String body = gson.toJson(payload);
 
-            ServiceUtils.getResponseAsync(
-                            ServiceUtils.SERVER + "/records/appointments",
-                            body,
-                            "POST"
-                    )
-                    .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
-                    .thenAccept(resp -> {
-                        if (!resp.isError()) {
-                            Platform.runLater(() -> appointments.add(resp.getAppointment()));
-                        } else {
-                            Platform.runLater(() ->
-                                    showAlert("Error", resp.getErrorMessage(), 2)
-
-                            );
-                        }
-                    })
-                    .exceptionally(ex -> {
-                        Platform.runLater(() -> {
-                            showAlert("Error", "Error al crear cita", 2);
-                            System.out.println("Error: " + ex.getMessage());
-                        });
-                        return null;
-                    });
+            insertAppointment(body);
 
         } catch (NumberFormatException e) {
             showAlert("Error", "Precio inválido", 2);
         }
 
+        createPdf();
+
+    }
+
+    private void insertAppointment(String body) {
+        ServiceUtils.getResponseAsync(
+                        ServiceUtils.SERVER + "/records/appointments",
+                        body,
+                        "POST"
+                )
+                .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
+                .thenAccept(resp -> {
+                    if (!resp.isError()) {
+                        Platform.runLater(() -> appointments.add(resp.getAppointment()));
+                    } else {
+                        Platform.runLater(() ->
+                                showAlert("Error", resp.getErrorMessage(), 2)
+
+                        );
+                    }
+                })
+                .exceptionally(ex -> {
+                    Platform.runLater(() -> {
+                        showAlert("Error", "Error al crear cita", 2);
+                        System.out.println("Error: " + ex.getMessage());
+                    });
+                    return null;
+                });
+    }
+
+    private void createPdf() {
         ServiceUtils.getResponseAsync(ServiceUtils.SERVER +"/records/"+cbPatient.getValue().getId()+"/appointments", null, "GET")
                 .thenApply(json -> gson.fromJson(json, AppointmentListDto.class))
                 .thenAccept(resp -> {
                     if (resp.isOk()) {
                         Platform.runLater(()->{
                             System.out.println(resp.getResult().size());
-                            if(resp.getResult().size() >= 8){
+                            if(resp.getResult().size() >= 8 && resp.getResult().size() <= 10){
+                                int appointmentsLeft = 10 - resp.getResult().size();
                                 if(!resp.getResult().isEmpty()){
                                     String pdfPath = cbPatient.getValue().getName()+"-appointments.pdf";
                                     PdfDocument pdf = PDFUtil.createPdfDocument(resp.getResult(), pdfPath);
@@ -229,7 +250,7 @@ public class AppointmentsViewController {
                                                     "capitanadri@hotmail.com",
                                                     "capitanadri12@gmail.com",
                                                     "Appointments " + cbPatient.getValue().getName(),
-                                                    "You have 2 appointments left: " + cbPatient.getValue().getName(),
+                                                    "You have "+appointmentsLeft+" appointments left: " + cbPatient.getValue().getName(),
                                                     pdfPath
                                             );
 
@@ -259,7 +280,6 @@ public class AppointmentsViewController {
                     });
                     return null;
                 });
-
     }
 
     public void onBackButtonClick(ActionEvent event) {
