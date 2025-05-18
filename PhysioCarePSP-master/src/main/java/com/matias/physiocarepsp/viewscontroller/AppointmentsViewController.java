@@ -3,10 +3,7 @@ package com.matias.physiocarepsp.viewscontroller;
 import com.google.api.services.gmail.Gmail;
 import com.google.gson.Gson;
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.matias.physiocarepsp.models.Appointment.Appointment;
-import com.matias.physiocarepsp.models.Appointment.AppointmentDto;
-import com.matias.physiocarepsp.models.Appointment.AppointmentListDto;
-import com.matias.physiocarepsp.models.Appointment.AppointmentResponse;
+import com.matias.physiocarepsp.models.Appointment.*;
 import com.matias.physiocarepsp.models.Patient.Patient;
 import com.matias.physiocarepsp.models.Patient.PatientListResponse;
 import com.matias.physiocarepsp.models.Physio.Physio;
@@ -231,12 +228,12 @@ public class AppointmentsViewController {
                         body,
                         "POST"
                 )
-                .thenApply(json -> gson.fromJson(json, AppointmentDto.class))
+                .thenApply(json -> gson.fromJson(json, AppointmentDtoResponse.class))
                 .thenAccept(resp -> {
                     //Falta arreglar esto
-                    if (!resp.getId().isEmpty()) {
+                    if (resp.isOk()) {
                         loadAppointments();
-                        resetFormFields();
+                        Platform.runLater(()-> resetFormFields());
                     } else {
                         Platform.runLater(() ->
                                 showAlert("Error", "Error creating Appointment", 2)
