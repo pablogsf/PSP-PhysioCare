@@ -54,7 +54,7 @@ public class PhysiosViewController implements Initializable {
     /**
      * Initializes the controller and sets up the physio list selection listener.
      *
-     * @param url            the location used to resolve relative paths
+     * @param url the location used to resolve relative paths
      * @param resourceBundle the resources used to localize the root object
      */
     @Override

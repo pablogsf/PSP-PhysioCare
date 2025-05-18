@@ -15,6 +15,8 @@ import com.matias.physiocarepsp.models.Appointment.AppointmentDto;
 import com.matias.physiocarepsp.models.Record.Record;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -29,6 +31,10 @@ public class PDFUtil {
 
     /**
      * Generates a PDF containing the medical record of a patient (without appointments).
+     * @param patientName Name of the patient.
+     * @param records List of medical records.
+     * @return Byte array representing the generated PDF.
+     * @throws Exception If an error occurs during PDF generation.
      */
     public static byte[] generateMedicalRecordPdf(String patientName, List<String> records) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -51,6 +57,10 @@ public class PDFUtil {
 
     /**
      * Generates a PDF listing all appointments of a patient, with a header and a "Fecha | Tratamiento" table.
+     * @param patientName Name of the patient.
+     * @param appointments List of appointments.
+     * @return Byte array representing the generated PDF.
+     * @throws Exception If an error occurs during PDF generation.
      */
     public static byte[] generateAppointmentsPdf(String patientName, List<Appointment> appointments) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -83,6 +93,10 @@ public class PDFUtil {
 
     /**
      * Generates a PDF with a salary report for a physiotherapist: "Fecha | Paciente | Tratamiento | Precio" table and total.
+     * @param physioName Name of the physiotherapist.
+     * @param appointments List of appointments.
+     * @return Byte array representing the generated PDF.
+     * @throws Exception If an error occurs during PDF generation.
      */
     public static byte[] generateSalaryPdf(String physioName, List<Appointment> appointments) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -119,6 +133,12 @@ public class PDFUtil {
         return baos.toByteArray();
     }
 
+    /**
+     * Creates a PDF document for a list of appointments and saves it to the specified destination.
+     * @param appointments List of appointments to include in the PDF.
+     * @param dest Destination file path for the PDF.
+     * @return The created PdfDocument object.
+     */
     public static PdfDocument createPdfDocument(List<AppointmentDto> appointments, String dest) {
         try {
             PdfWriter writer = new PdfWriter(dest);
@@ -129,9 +149,9 @@ public class PDFUtil {
             Table table = new Table(UnitValue.createPercentArray(columnWidths));
             table.setWidth(UnitValue.createPercentValue(100));
 
-            // Encabezados
-            table.addCell(createHeaderCell( "ID"));
-            table.addCell(createHeaderCell( "Physio"));
+            // Headers
+            table.addCell(createHeaderCell("ID"));
+            table.addCell(createHeaderCell("Physio"));
             table.addCell(createHeaderCell("Fecha"));
             table.addCell(createHeaderCell("Diagnóstico"));
             table.addCell(createHeaderCell("Tratamiento"));
@@ -159,44 +179,13 @@ public class PDFUtil {
         return null;
     }
 
-    private static String safeString(Object obj) {
-        return obj == null ? "" : obj.toString();
-    }
-
-    private static Cell createHeaderCell(String content) {
-        return new Cell()
-                .add(new Paragraph(content).setBold())
-                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
-                .setTextAlignment(TextAlignment.CENTER)
-                .setPadding(5);
-    }
-
-    private static Cell createWrappedCell(String content) {
-        return new Cell()
-                .add(new Paragraph(content != null ? content : "")
-                .setFontSize(9)
-                .setMultipliedLeading(1.2f))
-                .setTextAlignment(TextAlignment.LEFT)
-                .setVerticalAlignment(VerticalAlignment.TOP)
-                .setPadding(4)
-                .setKeepTogether(true);
-    }
-
-    private static String truncateId(String id) {
-        return (id != null && id.length() > 8) ? id.substring(0, 8) + "..." : id;
-    }
-
-    private static String formatIsoDate(String isoDateString) {
-        try {
-            ZonedDateTime zdt = ZonedDateTime.parse(isoDateString);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm");
-            return zdt.format(formatter);
-        } catch (Exception e) {
-            return isoDateString;
-        }
-    }
-
-    public static PdfDocument createRecordPdf(List<Record> records, String dest){
+    /**
+     * Creates a PDF document for a list of medical records and saves it to the specified destination.
+     * @param records List of medical records to include in the PDF.
+     * @param dest Destination file path for the PDF.
+     * @return The created PdfDocument object.
+     */
+    public static PdfDocument createRecordPdf(List<Record> records, String dest) {
         try {
             PdfWriter writer = new PdfWriter(dest);
             PdfDocument pdf = new PdfDocument(writer);
@@ -206,10 +195,10 @@ public class PDFUtil {
             Table table = new Table(UnitValue.createPercentArray(columnWidths));
             table.setWidth(UnitValue.createPercentValue(100));
 
-            // Encabezados
-            table.addCell(createHeaderCell( "ID Record"));
-            table.addCell(createHeaderCell( "ID Paciente"));
-            table.addCell(createHeaderCell( "Medical Record"));
+            // Headers
+            table.addCell(createHeaderCell("ID Record"));
+            table.addCell(createHeaderCell("ID Paciente"));
+            table.addCell(createHeaderCell("Medical Record"));
 
             for (Record appt : records) {
                 table.addCell(createWrappedCell(safeString(appt.getId())));
@@ -226,5 +215,77 @@ public class PDFUtil {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Reads the bytes of a PDF file from the specified file path.
+     * @param filePath Path to the PDF file.
+     * @return Byte array containing the PDF file data.
+     * @throws Exception If an error occurs while reading the file.
+     */
+    public static byte[] getPdfBytes(String filePath) throws Exception {
+        return Files.readAllBytes(Paths.get(filePath));
+    }
+
+    /**
+     * Safely converts an object to a string, returning an empty string if the object is null.
+     * @param obj The object to convert.
+     * @return The string representation of the object or an empty string if null.
+     */
+    private static String safeString(Object obj) {
+        return obj == null ? "" : obj.toString();
+    }
+
+    /**
+     * Creates a header cell for a table with specific formatting.
+     * @param content The content of the header cell.
+     * @return A formatted Cell object.
+     */
+    private static Cell createHeaderCell(String content) {
+        return new Cell()
+                .add(new Paragraph(content).setBold())
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setPadding(5);
+    }
+
+    /**
+     * Creates a wrapped cell for a table with specific formatting.
+     * @param content The content of the cell.
+     * @return A formatted Cell object.
+     */
+    private static Cell createWrappedCell(String content) {
+        return new Cell()
+                .add(new Paragraph(content != null ? content : "")
+                        .setFontSize(9)
+                        .setMultipliedLeading(1.2f))
+                .setTextAlignment(TextAlignment.LEFT)
+                .setVerticalAlignment(VerticalAlignment.TOP)
+                .setPadding(4)
+                .setKeepTogether(true);
+    }
+
+    /**
+     * Truncates an ID string to a maximum of 8 characters, appending "..." if truncated.
+     * @param id The ID string to truncate.
+     * @return The truncated ID string.
+     */
+    private static String truncateId(String id) {
+        return (id != null && id.length() > 8) ? id.substring(0, 8) + "..." : id;
+    }
+
+    /**
+     * Formats an ISO date string into a readable date format.
+     * @param isoDateString The ISO date string to format.
+     * @return The formatted date string.
+     */
+    private static String formatIsoDate(String isoDateString) {
+        try {
+            ZonedDateTime zdt = ZonedDateTime.parse(isoDateString);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm");
+            return zdt.format(formatter);
+        } catch (Exception e) {
+            return isoDateString;
+        }
     }
 }

@@ -28,18 +28,15 @@ public class LoginViewController {
         String username = txtUsername.getText();
         String password = txtPassword.getText();
 
-        // Validate that all fields are filled
         if (username.isEmpty() || password.isEmpty()) {
             Utils.showAlert("ERROR", "Error: all fields must be filled to continue.", 2);
         } else {
-            // Attempt login and navigate to the main view if successful
             if (ServiceUtils.login(username, password)) {
                 Node source = (Node) actionEvent.getSource();
                 String fxmlFile = "/com/matias/physiocarepsp/fxmlviews/first-view.fxml";
                 String title = "Welcome | PhysioCare";
                 Utils.switchView(source, fxmlFile, title);
             } else {
-                // Show error if login fails
                 Utils.showAlert("ERROR", "Error: login failed. User or password incorrect.", 2);
             }
         }

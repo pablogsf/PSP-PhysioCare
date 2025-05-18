@@ -3,17 +3,12 @@ package com.matias.physiocarepsp.viewscontroller;
 import com.google.gson.*;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.matias.physiocarepsp.models.Record.RecordListResponse;
-import com.matias.physiocarepsp.utils.LocalDateAdapter;
-import com.matias.physiocarepsp.utils.PDFUtil;
-import com.matias.physiocarepsp.utils.ServiceUtils;
-import com.matias.physiocarepsp.utils.Utils;
+import com.matias.physiocarepsp.utils.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 
 import java.lang.reflect.Type;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -101,21 +96,46 @@ public class FirstViewController {
                             PdfDocument pdf = PDFUtil.createRecordPdf(response.getRecords(), "Records.pdf");
                             if (pdf != null) {
                                 showAlert("Success", "PDF generated successfully!", 1);
-                                //Falta añadir el upload que es la funcion SftpUploader.upload
 
+                                byte[] pdfBytes = null;
+                                try {
+                                    pdfBytes = PDFUtil.getPdfBytes("Records.pdf");
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                                SftpUploader.uploadAsync(
+                                                "matiasborra.es", 22,
+                                                "usuario", "contraseña",    // Insertar credenciales
+                                                pdfBytes, "Records.pdf"
+                                        )
+                                        .thenAccept(success -> {
+                                            Platform.runLater(() -> {
+                                                if (success) {
+                                                    showAlert("Success", "PDF uploaded successfully!", 1);
+                                                } else {
+                                                    showAlert("Error",   "Failed to upload PDF.", 2);
+                                                }
+                                            });
+                                        });
 
                             } else {
                                 showAlert("Error", "Failed to generate PDF.", 2);
                             }
                         });
                     } else {
-                        Platform.runLater(() -> showAlert("Error", response.getErrorMessage(), 2));
+                        Platform.runLater(() ->
+                                showAlert("Error", response.getErrorMessage(), 2)
+                        );
                     }
                 })
                 .exceptionally(ex -> {
                     ex.printStackTrace();
-                    Platform.runLater(() -> showAlert("Error", "Failed to fetch records: " + ex.getMessage(), 2));
+                    Platform.runLater(() ->
+                            showAlert("Error", "Failed to fetch records: " + ex.getMessage(), 2)
+                    );
                     return null;
                 });
     }
+
 }
