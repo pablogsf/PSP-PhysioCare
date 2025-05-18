@@ -233,14 +233,14 @@ public class AppointmentsViewController {
                 )
                 .thenApply(json -> gson.fromJson(json, AppointmentDto.class))
                 .thenAccept(resp -> {
-                    if (Boolean.parseBoolean(resp.getId())) {
-                        //Platform.runLater(() -> appointments.add(resp.getAppointment()));
-                        System.out.println("Appointment created: " + resp.getId());
+                    //Falta arreglar esto
+                    if (!resp.getId().isEmpty()) {
+                        loadAppointments();
+                        resetFormFields();
                     } else {
-                        /*Platform.runLater(() ->
-                                showAlert("Error", resp.getErrorMessage(), 2)
-
-                        );*/
+                        Platform.runLater(() ->
+                                showAlert("Error", "Error creating Appointment", 2)
+                        );
                     }
                 })
                 .exceptionally(ex -> {
@@ -308,5 +308,15 @@ public class AppointmentsViewController {
         Utils.switchView(source,
                 "/com/matias/physiocarepsp/fxmlviews/first-view.fxml",
                 "Welcome | PhysioCare");
+    }
+
+    private void resetFormFields() {
+        dpDate.setValue(null);
+        cbPatient.setValue(null);
+        cbPhysio.setValue(null);
+        txtTreatment.clear();
+        txtPrice.clear();
+        txtDiagnosis.clear();
+        txtObservation.clear();
     }
 }
