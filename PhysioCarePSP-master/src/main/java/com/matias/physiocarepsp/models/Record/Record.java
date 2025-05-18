@@ -19,7 +19,7 @@ public class Record {
     /**
      * Constructs a new Record without an ID.
      *
-     * @param patient       the name of the patient
+     * @param patient the name of the patient
      * @param medicalRecord the medical history or record of the patient
      * @param appointments  the list of appointments associated with the patient
      */
@@ -32,10 +32,10 @@ public class Record {
     /**
      * Constructs a new Record with an ID.
      *
-     * @param id            the unique identifier of the record
-     * @param patient       the name of the patient
+     * @param id the unique identifier of the record
+     * @param patient the name of the patient
      * @param medicalRecord the medical history or record of the patient
-     * @param appointments  the list of appointments associated with the patient
+     * @param appointments the list of appointments associated with the patient
      */
     public Record(String id, String patient, String medicalRecord, List<Appointment> appointments) {
         this.id = id;

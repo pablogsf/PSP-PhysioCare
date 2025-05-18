@@ -19,11 +19,11 @@ public class Physio {
     /**
      * Constructs a new Physio without an ID.
      *
-     * @param name          the physiotherapist's first name
-     * @param surname       the physiotherapist's last name
+     * @param name the physiotherapist's first name
+     * @param surname the physiotherapist's last name
      * @param licenseNumber the physiotherapist's license number
-     * @param specialty     the physiotherapist's specialty
-     * @param email         the physiotherapist's email address
+     * @param specialty the physiotherapist's specialty
+     * @param email the physiotherapist's email address
      */
     public Physio(String name, String surname, String licenseNumber, String specialty, String email) {
         this.name = name;
@@ -36,12 +36,12 @@ public class Physio {
     /**
      * Constructs a new Physio with an ID.
      *
-     * @param id            the unique identifier of the physiotherapist
-     * @param name          the physiotherapist's first name
-     * @param surname       the physiotherapist's last name
-     * @param specialty     the physiotherapist's specialty
+     * @param id the unique identifier of the physiotherapist
+     * @param name the physiotherapist's first name
+     * @param surname the physiotherapist's last name
+     * @param specialty the physiotherapist's specialty
      * @param licenseNumber the physiotherapist's license number
-     * @param email         the physiotherapist's email address
+     * @param email the physiotherapist's email address
      */
     public Physio(String id, String name, String surname, String specialty, String licenseNumber, String email) {
         this.id = id;

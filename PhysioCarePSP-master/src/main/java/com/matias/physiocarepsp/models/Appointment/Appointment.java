@@ -10,7 +10,6 @@ public class Appointment {
 
     @SerializedName("_id")
     private String id;
-
     private String patientId;
     private String patientName;
     private String physioId;

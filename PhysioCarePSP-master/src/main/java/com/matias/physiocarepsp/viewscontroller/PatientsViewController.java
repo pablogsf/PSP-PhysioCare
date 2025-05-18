@@ -69,7 +69,7 @@ public class PatientsViewController implements Initializable {
     /**
      * Initializes the controller and sets up the patient list selection listener.
      *
-     * @param url            the location used to resolve relative paths
+     * @param url the location used to resolve relative paths
      * @param resourceBundle the resources used to localize the root object
      */
     @Override
