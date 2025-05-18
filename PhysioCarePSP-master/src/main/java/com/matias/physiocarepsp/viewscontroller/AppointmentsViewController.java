@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 import static com.matias.physiocarepsp.utils.Utils.showAlert;
@@ -188,35 +190,43 @@ public class AppointmentsViewController {
             isValid = false;
         }
 
-        if(isValid && disabled) {
+        if(isValid && disabled){
 
-            try {
-                LocalDate date = dpDate.getValue();
-                // Instant en UTC sin nanos
-                String isoDateTime = date
-                        .atTime(LocalTime.now())
-                        .atOffset(ZoneOffset.UTC)
-                        .truncatedTo(ChronoUnit.SECONDS)
-                        .toString();
+            checkIfPatientHasAppointmentsLeft(isOk ->{
+                if(isOk){
+                    System.out.println("Insertando cita");
+                    try {
+                        LocalDate date = dpDate.getValue();
+                        // Instant en UTC sin nanos
+                        String isoDateTime = date
+                                .atTime(LocalTime.now())
+                                .atOffset(ZoneOffset.UTC)
+                                .truncatedTo(ChronoUnit.SECONDS)
+                                .toString();
 
-                Map<String, Object> payload = new HashMap<>();
-                payload.put("patient", cbPatient.getValue().getId());
-                payload.put("physio", ServiceUtils.getUserId());
-                payload.put("date", isoDateTime);
-                payload.put("treatment", txtTreatment.getText());
-                payload.put("diagnosis", txtDiagnosis.getText().isEmpty() ? "por determinar en cita" : txtDiagnosis.getText());
-                payload.put("observations", txtObservation.getText().isEmpty() ? "por determinar en cita" : txtObservation.getText());
-                payload.put("price", Double.parseDouble(txtPrice.getText()));
+                        Map<String, Object> payload = new HashMap<>();
+                        payload.put("patient", cbPatient.getValue().getId());
+                        payload.put("physio", ServiceUtils.getUserId());
+                        payload.put("date", isoDateTime);
+                        payload.put("treatment", txtTreatment.getText());
+                        payload.put("diagnosis", txtDiagnosis.getText().isEmpty() ? "por determinar en cita" : txtDiagnosis.getText());
+                        payload.put("observations", txtObservation.getText().isEmpty() ? "por determinar en cita" : txtObservation.getText());
+                        payload.put("price", Double.parseDouble(txtPrice.getText()));
 
-                String body = gson.toJson(payload);
+                        String body = gson.toJson(payload);
 
-                insertAppointment(body);
+                        insertAppointment(body);
 
-            } catch (NumberFormatException e) {
-                showAlert("Error", "Precio inválido", 2);
-            }
+                    } catch (NumberFormatException e) {
+                        showAlert("Error", "Precio inválido", 2);
+                    }
 
-            createPdf();
+                    createPdf();
+                }else{
+                    System.out.println("No se puede insertar cita");
+                }
+            });
+
         }else{
             showAlert("Error", "Rellene todos los campos", 2);
         }
@@ -315,5 +325,38 @@ public class AppointmentsViewController {
         txtPrice.clear();
         txtDiagnosis.clear();
         txtObservation.clear();
+    }
+
+
+    private void checkIfPatientHasAppointmentsLeft(Consumer<Boolean> callback){
+        ServiceUtils.getResponseAsync(ServiceUtils.SERVER +"/records/"+cbPatient.getValue().getId()+"/appointments", null, "GET")
+                .thenApply(json -> gson.fromJson(json, AppointmentListDto.class))
+                .thenAccept(resp -> {
+                    if (resp.isOk()) {
+                        Platform.runLater(()->{
+                            System.out.println(resp.getResult().size());
+                            if(resp.getResult().size() > 10){
+                                 callback.accept(false);
+                                 showAlert("Error", "No tienes citas disponibles", 2);
+
+                            }else{
+                                callback.accept(true);
+                            }
+                        });
+                    } else {
+                        // alerta de error
+                        Platform.runLater(()->{
+                            System.out.println("Error: " + resp.getResult());
+                            callback.accept(false);
+                        });
+                    }
+                }).exceptionally(ex->{
+                    // alerta de error
+                    Platform.runLater(()->{
+                        System.out.println("Error: " + ex.getMessage());
+                        callback.accept(false);
+                    });
+                    return null;
+                });
     }
 }
