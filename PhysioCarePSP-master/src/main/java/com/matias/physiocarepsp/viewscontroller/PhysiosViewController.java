@@ -1,11 +1,18 @@
 package com.matias.physiocarepsp.viewscontroller;
 
+import com.google.api.services.gmail.Gmail;
 import com.google.gson.Gson;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.matias.physiocarepsp.models.Appointment.AppointmentListDto;
 import com.matias.physiocarepsp.models.Physio.Physio;
 import com.matias.physiocarepsp.models.Physio.PhysioListResponse;
 import com.matias.physiocarepsp.models.Physio.PhysioResponse;
+import com.matias.physiocarepsp.utils.EmailUtil;
+import com.matias.physiocarepsp.utils.PDFUtil;
 import com.matias.physiocarepsp.utils.ServiceUtils;
 import com.matias.physiocarepsp.utils.Utils;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +24,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -312,5 +320,46 @@ public class PhysiosViewController implements Initializable {
         txtLicenseNumber.setText(physio.getLicenseNumber());
         txtEmail.setText(physio.getEmail());
         cbSpecialization.setValue(physio.getSpecialty());
+    }
+
+    public void onSendPaycheck(ActionEvent actionEvent) {
+        lsPhysios.getItems().forEach(physio -> {
+            sendPaychecks(physio);
+        });
+    }
+
+    private void sendPaychecks(Physio physio) {
+        String url = ServiceUtils.SERVER + "/records/physio/" + physio.getId() + "/appointments";
+
+        ServiceUtils.getResponseAsync(url, null, "GET")
+                .thenApply(json -> gson.fromJson(json, AppointmentListDto.class))
+                .thenAccept(response -> {
+                    if(response.isOk()) {
+                        Platform.runLater(() -> {
+                            String pdfPath = physio.getName() + "-salary.pdf";
+                            PdfDocument pdf = PDFUtil.generateSalaryPdf(physio.getName(), response.getResult(), pdfPath);
+                            if(pdf != null) {
+                                try{
+                                    Gmail service = EmailUtil.getService();
+                                    MimeMessage emailContent = EmailUtil.createEmailWithAttachment(
+                                            "pablogarciasanchezfortun@gmail.com",
+                                            "pablogarsanfor@gmail.com",
+                                            "Monthly Salary Summary",
+                                            "Hi Mr/Mrs" + physio.getName() + ". " +
+                                                    "Here you have your monthly paycheck.",
+                                            pdfPath
+                                    );
+                                    EmailUtil.sendMessage(service, "me", emailContent);
+                                } catch (MessagingException e) {
+                                    throw new RuntimeException(e);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                            }
+                        });
+                    }
+                });
     }
 }

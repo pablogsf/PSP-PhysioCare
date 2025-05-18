@@ -8,79 +8,173 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.matias.physiocarepsp.viewscontroller.AppointmentsViewController">
-    <top>
-        <Label style="-fx-font-size:18px; -fx-padding:10" text="Gestión de Citas" />
-    </top>
-    <center>
-        <TableView fx:id="tblAppointments" prefHeight="300">
-            <columns>
-                <TableColumn fx:id="colDate" text="Fecha" />
-                <TableColumn fx:id="colPatient" text="Paciente" />
-                <TableColumn fx:id="colPhysio" text="Fisio" />
-                <TableColumn fx:id="colTreatment" text="Tratamiento" />
-                <TableColumn fx:id="colPrice" text="Precio" />
-            </columns>
-        </TableView>
-    </center>
-    <bottom>
-        <GridPane hgap="10" prefHeight="264.0" prefWidth="614.0" vgap="10">
+<VBox alignment="CENTER" prefHeight="700.0" prefWidth="1000.0" spacing="20.0" style="-fx-background-color: linear-gradient(to bottom right, #F0F6FF, #E1EAFF);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.matias.physiocarepsp.viewscontroller.AppointmentsViewController">
+    <padding>
+        <Insets bottom="25.0" left="30.0" right="30.0" top="25.0" />
+    </padding>
+    <children>
+        <!-- Encabezado -->
+        <HBox alignment="CENTER" spacing="15.0">
+            <Circle fill="#4285F4" radius="25">
+                <effect>
+                    <DropShadow color="#00000033" offsetX="0.0" offsetY="2.0" radius="5.0" />
+                </effect>
+            </Circle>
+            <VBox alignment="CENTER">
+                <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="GESTIÓN DE CITAS">
+                    <font>
+                        <Font name="System Bold" size="28.0" />
+                    </font>
+                </Label>
+                <Label style="-fx-font-size: 14px; -fx-text-fill: #676E7D;" text="Administra las citas médicas y tratamientos programados" />
+            </VBox>
+        </HBox>
+
+        <!-- Contenido Principal -->
+        <VBox spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" VBox.vgrow="ALWAYS">
+            <effect>
+                <DropShadow color="#0000001A" offsetX="0.0" offsetY="5.0" radius="10.0" />
+            </effect>
             <padding>
-                <Insets bottom="10" left="10" right="10" top="10" />
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
             </padding>
-            <columnConstraints>
-                <ColumnConstraints percentWidth="25" />
-                <ColumnConstraints percentWidth="75" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints vgrow="NEVER" />
-                <RowConstraints vgrow="NEVER" />
-                <RowConstraints vgrow="NEVER" />
-            <RowConstraints />
-            <RowConstraints maxHeight="30.0" minHeight="28.0" prefHeight="28.0" />
-            <RowConstraints maxHeight="22.0" minHeight="20.0" prefHeight="22.0" />
-            <RowConstraints maxHeight="22.0" minHeight="20.0" prefHeight="22.0" />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" />
-            </rowConstraints>
 
-            <Label text="Fecha y hora" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-            <DatePicker fx:id="dpDate" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-            <Label text="Paciente" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-            <ComboBox fx:id="cbPatient" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label text="Fisioterapeuta" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-            <ComboBox fx:id="cbPhysio" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label text="Tratamiento" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-            <TextField fx:id="txtTreatment" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-            <Label text="Precio" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-            <TextField fx:id="txtPrice" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-            <Button onAction="#onAddAppointment" text="Agregar" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-            <Button onAction="#onBackButtonClick" text="Volver al Menú" GridPane.columnIndex="1" GridPane.rowIndex="8">
-            <GridPane.margin>
-               <Insets left="70.0" />
-            </GridPane.margin></Button>
-         <Label text="Diagnostico" GridPane.rowIndex="5" />
-         <TextField fx:id="txtDiagnosis" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-         <Label text="Observaciones" GridPane.rowIndex="6" />
-         <TextField fx:id="txtObservation" GridPane.columnIndex="1" GridPane.rowIndex="6">
-            <GridPane.margin>
-               <Insets />
-            </GridPane.margin>
-         </TextField>
-         <Button fx:id="btn_Eliminar" mnemonicParsing="false" onAction="#btn_DeleteAction" text="Eliminar" GridPane.columnIndex="1" GridPane.rowIndex="8">
-            <GridPane.margin>
-               <Insets left="180.0" />
-            </GridPane.margin>
-         </Button>
-        </GridPane>
-    </bottom>
+            <!-- Tabla de citas -->
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="Listado de Citas">
+                <font>
+                    <Font name="System Bold" size="18.0" />
+                </font>
+            </Label>
 
-</BorderPane>
+            <TableView fx:id="tblAppointments" VBox.vgrow="ALWAYS" style="-fx-background-color: white; -fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #E5E9F2; -fx-border-width: 1;">
+                <columns>
+                    <TableColumn fx:id="colDate" prefWidth="150.0" text="Fecha" />
+                    <TableColumn fx:id="colPatient" prefWidth="150.0" text="Paciente" />
+                    <TableColumn fx:id="colPhysio" prefWidth="150.0" text="Fisioterapeuta" />
+                    <TableColumn fx:id="colTreatment" prefWidth="150.0" text="Tratamiento" />
+                    <TableColumn fx:id="colPrice" prefWidth="100.0" text="Precio" />
+                </columns>
+            </TableView>
+
+            <!-- Formulario de datos -->
+            <VBox spacing="10.0" style="-fx-background-color: #FAFBFF; -fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #EDF0F7; -fx-border-width: 1;">
+                <padding>
+                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                </padding>
+
+                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="Información de la Cita">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+
+                <GridPane hgap="20.0" vgap="15.0">
+                    <columnConstraints>
+                        <ColumnConstraints hgrow="NEVER" minWidth="130.0" />
+                        <ColumnConstraints hgrow="ALWAYS" minWidth="300.0" />
+                    </columnConstraints>
+
+                    <!-- Fecha y hora -->
+                    <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="Fecha y hora:" />
+                    </VBox>
+                    <DatePicker fx:id="dpDate" prefHeight="40.0" promptText="Seleccionar fecha" style="-fx-background-color: #F7F9FC; -fx-border-color: #E5E9F2; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+
+                    <!-- Paciente -->
+                    <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="Paciente:" />
+                    </VBox>
+                    <ComboBox fx:id="cbPatient" prefHeight="40.0" prefWidth="150.0" promptText="Seleccionar paciente" style="-fx-background-color: #F7F9FC; -fx-border-color: #E5E9F2; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8;" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" maxWidth="Infinity" />
+
+                    <!-- Fisioterapeuta -->
+                    <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="Fisioterapeuta:" />
+                    </VBox>
+                    <ComboBox fx:id="cbPhysio" prefHeight="40.0" prefWidth="150.0" promptText="Seleccionar fisioterapeuta" style="-fx-background-color: #F7F9FC; -fx-border-color: #E5E9F2; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8;" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" maxWidth="Infinity" />
+
+                    <!-- Tratamiento -->
+                    <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="Tratamiento:" />
+                    </VBox>
+                    <TextField fx:id="txtTreatment" prefHeight="40.0" promptText="Tipo de tratamiento" style="-fx-background-color: #F7F9FC; -fx-border-color: #E5E9F2; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                    <!-- Precio -->
+                    <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="Precio:" />
+                    </VBox>
+                    <TextField fx:id="txtPrice" prefHeight="40.0" promptText="Precio del tratamiento" style="-fx-background-color: #F7F9FC; -fx-border-color: #E5E9F2; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                    <!-- Diagnóstico -->
+                    <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="5">
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="Diagnóstico:" />
+                    </VBox>
+                    <TextField fx:id="txtDiagnosis" prefHeight="40.0" promptText="Diagnóstico inicial" style="-fx-background-color: #F7F9FC; -fx-border-color: #E5E9F2; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                    <!-- Observaciones -->
+                    <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="6">
+                        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="Observaciones:" />
+                    </VBox>
+                    <TextField fx:id="txtObservation" prefHeight="40.0" promptText="Observaciones adicionales" style="-fx-background-color: #F7F9FC; -fx-border-color: #E5E9F2; -fx-border-width: 1; -fx-background-radius: 8; -fx-border-radius: 8; -fx-padding: 8;" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+                    <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                    </rowConstraints>
+                </GridPane>
+
+                <!-- Botones de acción -->
+                <HBox alignment="CENTER" spacing="15.0" style="-fx-padding: 15 0 0 0;">
+                    <children>
+                        <Button onAction="#onAddAppointment" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: #4285F4; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Añadir">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                            <effect>
+                                <DropShadow color="#4285F466" offsetX="0.0" offsetY="2.0" radius="5.0" />
+                            </effect>
+                        </Button>
+                        <Button fx:id="btn_Eliminar" onAction="#btn_DeleteAction" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: #EA4335; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Eliminar">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                            <effect>
+                                <DropShadow color="#EA433566" offsetX="0.0" offsetY="2.0" radius="5.0" />
+                            </effect>
+                        </Button>
+                        <Button prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: #FBBC05; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-cursor: hand;" text="Limpiar">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                            <effect>
+                                <DropShadow color="#FBBC0566" offsetX="0.0" offsetY="2.0" radius="5.0" />
+                            </effect>
+                        </Button>
+                    </children>
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <!-- Pie de página con botón de retroceso -->
+        <HBox alignment="BOTTOM_RIGHT" spacing="10.0">
+            <Button onAction="#onBackButtonClick" prefHeight="45.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-text-fill: #4285F4; -fx-border-color: #4285F4; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;" text="Volver">
+                <font>
+                    <Font name="System Bold" size="14.0" />
+                </font>
+            </Button>
+        </HBox>
+    </children>
+</VBox>
