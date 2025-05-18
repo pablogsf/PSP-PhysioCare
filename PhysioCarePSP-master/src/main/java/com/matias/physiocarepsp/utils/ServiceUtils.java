@@ -19,7 +19,7 @@ public class ServiceUtils {
 
     private static String token = null;
     private static String userId = null;
-    public static final String SERVER = "http://matiasborra.es:8081";
+    public static final String SERVER = "https://matiasborra.es/api/physio";
 
     /**
      * Sets the authentication token.
@@ -48,13 +48,10 @@ public class ServiceUtils {
      * @return true if login is successful, false otherwise
      */
     public static boolean login(String username, String password) {
-//        username = "admin";
-//        password = "password123";
         try {
             String credentials = new Gson().toJson(new LoginRequest(username, password));
             System.out.println("Credentials: " + credentials);
 
-            // Send request
             String jsonResponse = getResponse(SERVER + "/auth/login", credentials, "POST");
 
             AuthResponse authResponse = new Gson().fromJson(jsonResponse, AuthResponse.class);
@@ -89,14 +86,14 @@ public class ServiceUtils {
                 return param.split("=", 2)[1];
             }
         }
-        return null; // Probably binary content
+        return null;
     }
 
     /**
      * Sends an HTTP request and retrieves the response as a string.
      *
-     * @param url    the URL to send the request to
-     * @param data   the request body (can be null)
+     * @param url the URL to send the request to
+     * @param data the request body (can be null)
      * @param method the HTTP method (e.g., GET, POST, PUT, DELETE)
      * @return the response as a string
      * @throws Exception if an error occurs during the request
@@ -176,8 +173,8 @@ public class ServiceUtils {
     /**
      * Sends an asynchronous HTTP request and retrieves the response as a string.
      *
-     * @param url    the URL to send the request to
-     * @param data   the request body (can be null)
+     * @param url the URL to send the request to
+     * @param data the request body (can be null)
      * @param method the HTTP method (e.g., GET, POST, PUT, DELETE)
      * @return a CompletableFuture containing the response as a string
      */

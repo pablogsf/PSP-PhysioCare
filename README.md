@@ -67,51 +67,63 @@
 
 <h2 id="project-structure">📂 Project Structure</h2>
 <pre><code>
-src/main/java
-├── com
-│   └── matias
-│       └── physiocarepsp
-│           ├── MainApplication.java
-│           ├── models
-│           │   ├── Appointment
-│           │   │   ├── AppointmentDto.java
-│           │   │   ├── Appointment.java
-│           │   │   ├── AppointmentListDto.java
-│           │   │   ├── AppointmentListResponse.java
-│           │   │   ├── AppointmentRequest.java
-│           │   │   └── AppointmentResponse.java
-│           │   ├── Auth
-│           │   │   ├── AuthResponse.java
-│           │   │   └── LoginRequest.java
-│           │   ├── BaseResponse.java
-│           │   ├── Patient
-│           │   │   ├── Patient.java
-│           │   │   ├── PatientListResponse.java
-│           │   │   └── PatientResponse.java
-│           │   ├── Physio
-│           │   │   ├── Physio.java
-│           │   │   ├── PhysioListResponse.java
-│           │   │   └── PhysioResponse.java
-│           │   └── Record
-│           │       ├── Record.java
-│           │       ├── RecordListResponse.java
-│           │       └── RecordResponse.java
-│           ├── utils
-│           │   ├── AppointmentService.java
-│           │   ├── EmailUtil.java
-│           │   ├── LocalDateAdapter.java
-│           │   ├── PDFUtil.java
-│           │   ├── ServiceUtils.java
-│           │   ├── SftpUploader.java
-│           │   └── Utils.java
-│           └── viewscontroller
-│               ├── AppointmentsViewController.java
-│               ├── CalendarController.java
-│               ├── FirstViewController.java
-│               ├── LoginViewController.java
-│               ├── PatientsViewController.java
-│               └── PhysiosViewController.java
-└── module-info.java
+src/main
+├── java
+│   ├── com
+│   │   └── matias
+│   │       └── physiocarepsp
+│   │           ├── MainApplication.java
+│   │           ├── models
+│   │           │   ├── Appointment
+│   │           │   │   ├── AppointmentDto.java
+│   │           │   │   ├── AppointmentDtoResponse.java
+│   │           │   │   ├── Appointment.java
+│   │           │   │   ├── AppointmentListDto.java
+│   │           │   │   ├── AppointmentListResponse.java
+│   │           │   │   └── AppointmentResponse.java
+│   │           │   ├── Auth
+│   │           │   │   ├── AuthResponse.java
+│   │           │   │   └── LoginRequest.java
+│   │           │   ├── BaseResponse.java
+│   │           │   ├── Patient
+│   │           │   │   ├── Patient.java
+│   │           │   │   ├── PatientListResponse.java
+│   │           │   │   └── PatientResponse.java
+│   │           │   ├── Physio
+│   │           │   │   ├── Physio.java
+│   │           │   │   ├── PhysioListResponse.java
+│   │           │   │   └── PhysioResponse.java
+│   │           │   └── Record
+│   │           │       ├── Record.java
+│   │           │       ├── RecordListResponse.java
+│   │           │       └── RecordResponse.java
+│   │           ├── utils
+│   │           │   ├── AppointmentService.java
+│   │           │   ├── EmailUtil.java
+│   │           │   ├── LocalDateAdapter.java
+│   │           │   ├── PDFUtil.java
+│   │           │   ├── ServiceUtils.java
+│   │           │   ├── SftpUploader.java
+│   │           │   └── Utils.java
+│   │           └── viewscontroller
+│   │               ├── AppointmentsViewController.java
+│   │               ├── CalendarController.java
+│   │               ├── FirstViewController.java
+│   │               ├── LoginViewController.java
+│   │               ├── PatientsViewController.java
+│   │               └── PhysiosViewController.java
+│   └── module-info.java
+└── resources
+    └── com
+        └── matias
+            └── physiocarepsp
+                └── fxmlviews
+                    ├── appointments-view.fxml
+                    ├── calendar-view.fxml
+                    ├── first-view.fxml
+                    ├── login-view.fxml
+                    ├── patients-view.fxml
+                    └── physios-view.fxml
 
 </code></pre>
 
@@ -153,39 +165,3 @@ src/main/java
 
 <h2 id="license">📄 License</h2>
 <p>This project is licensed under the <strong>MIT License</strong>. See <a href="LICENSE">LICENSE</a> for details.</p>
-
-
-
-🛠️ Qué falta por hacer
-
-Flujo de subida de fichas
-
-Un punto en UI (o un servicio en segundo plano) que recorra todos los Record (o los obtenga vía API), genere el PDF de cada ficha (sin incluir citas) y llame a SftpUploader.upload(host, port, user, pass, pdfBytes, pacienteId + ".pdf").
-
-{{URL}}/records
-
-
-
-Notificaciones por e-mail
-
-Un NotificationService que:
-
-Recoja todos los pacientes ({{URL}}/patients) y sus citas ({{URL}}/records/:id_patient/appointments).
-
-Para cada uno con > 8 citas,({{URL}}/records/patient/:id_patient/appointments/count) genere el PDF con generateAppointmentsPdf(), y envíe un mail recordatorio con EmailUtil.send(…).
-
-Recoja todos los fisioterapeutas ({{URL}}/physios) y sus citas ({{URL}}/records/physio/:physio_id/appointments), genere generateSalaryPdf(), y les envíe su nómina.
-
-
-Integración UI/UX
-
-Botones o menús para “Exportar fichas” y “Enviar notificaciones”. Falta programar el envío de correo al tener un patient 8 citas.
-
-O bien programar estas tareas al arrancar la app.
-
-
-Próximos pasos
-
-Crear la clase NotificationService con toda la lógica de recopilación, generación de PDFs y envío SFTP/Email.
-
-Añadir botones/vistas para disparar esos procesos manualmente. (“Exportar fichas” y “Enviar notificaciones”)
