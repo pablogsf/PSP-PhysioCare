@@ -1,20 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
 <?import com.calendarfx.view.CalendarView?>
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.matias.physiocarepsp.viewscontroller.CalendarController"
-      spacing="10"
-      alignment="CENTER">
+
+<VBox alignment="CENTER" prefHeight="700.0" prefWidth="1000.0" spacing="20.0" style="-fx-background-color: linear-gradient(to bottom right, #F0F6FF, #E1EAFF);" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.matias.physiocarepsp.viewscontroller.CalendarController">
+    <padding>
+        <Insets bottom="25.0" left="30.0" right="30.0" top="25.0" />
+    </padding>
     <children>
-        <Label text="Calendario de Citas"
-               style="-fx-font-size: 24px; -fx-font-weight: bold;" />
-        <CalendarView fx:id="calendarView"
-                      VBox.vgrow="ALWAYS"
-                      prefWidth="900"
-                      prefHeight="600" />
-        <Button text="Volver al Menú"
-                onAction="#onBackButtonClick" />
+        <!-- Encabezado -->
+        <HBox alignment="CENTER" spacing="15.0">
+            <Circle fill="#4285F4" radius="25">
+                <effect>
+                    <DropShadow color="#00000033" offsetX="0.0" offsetY="2.0" radius="5.0" />
+                </effect>
+            </Circle>
+            <VBox alignment="CENTER">
+                <Label style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2E5AAC;" text="CALENDARIO DE CITAS">
+                    <font>
+                        <Font name="System Bold" size="28.0" />
+                    </font>
+                </Label>
+                <Label style="-fx-font-size: 14px; -fx-text-fill: #676E7D;" text="Gestiona y visualiza todas las citas programadas" />
+            </VBox>
+        </HBox>
+
+        <!-- Calendario Principal -->
+        <VBox style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15;" VBox.vgrow="ALWAYS">
+            <effect>
+                <DropShadow color="#0000001A" offsetX="0.0" offsetY="5.0" radius="10.0" />
+            </effect>
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
+            <children>
+                <CalendarView fx:id="calendarView" VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
+
+        <!-- Pie de página con botón de retroceso -->
+        <HBox alignment="BOTTOM_RIGHT" spacing="10.0">
+            <Button fx:id="btnBack" onAction="#onBackButtonClick" prefHeight="45.0" prefWidth="140.0" style="-fx-background-color: transparent; -fx-text-fill: #4285F4; -fx-border-color: #4285F4; -fx-border-radius: 8; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;" text="Volver">
+                <font>
+                    <Font name="System Bold" size="14.0" />
+                </font>
+            </Button>
+        </HBox>
     </children>
 </VBox>
