@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static com.matias.physiocarepsp.utils.Utils.showAlert;
 
@@ -348,4 +347,36 @@ public class AppointmentsViewController {
                 "/com/matias/physiocarepsp/fxmlviews/first-view.fxml",
                 "Welcome | PhysioCare");
     }
+
+    public void btn_DeleteAction(ActionEvent actionEvent) {
+        Appointment selectedAppointment = tblAppointments.getSelectionModel().getSelectedItem();
+        if (selectedAppointment != null) {
+            String appointmentId = selectedAppointment.getId();
+            String url = ServiceUtils.SERVER + "/records/appointments/" + appointmentId;
+
+            ServiceUtils.getResponseAsync(url, null, "DELETE")
+                    .thenAccept(resp -> {
+                        if (resp != null) {
+                            Platform.runLater(() -> {
+                                appointments.remove(selectedAppointment);
+                                showAlert("Success", "Cita eliminada correctamente", 1);
+                            });
+                        } else {
+                            Platform.runLater(() ->
+                                    showAlert("Error", "Error al eliminar la cita", 2)
+                            );
+                        }
+                    })
+                    .exceptionally(ex -> {
+                        Platform.runLater(() ->
+                                showAlert("Error", "Error al eliminar la cita", 2)
+                        );
+                        return null;
+                    });
+        } else {
+            showAlert("Error", "Seleccione una cita para eliminar", 2);
+        }
+    }
+
+
 }
