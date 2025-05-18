@@ -14,9 +14,9 @@ public class Utils {
     /**
      * Displays an alert dialog with the specified title, content, and type.
      *
-     * @param title   the title of the alert
+     * @param title the title of the alert
      * @param content the content/message of the alert
-     * @param type    the type of the alert (1 for information, 2 for error)
+     * @param type the type of the alert (1 for information, 2 for error)
      */
     public static void showAlert(String title, String content, int type) {
         Alert alert = null;
@@ -35,9 +35,9 @@ public class Utils {
     /**
      * Switches the current view to a new FXML view.
      *
-     * @param source   the source node triggering the view switch
+     * @param source the source node triggering the view switch
      * @param fxmlFile the path to the FXML file for the new view
-     * @param title    the title of the new view
+     * @param title the title of the new view
      */
     public static void switchView(Node source, String fxmlFile, String title) {
         Stage stage = (Stage) source.getScene().getWindow();

@@ -12,7 +12,7 @@ public class LoginRequest {
     /**
      * Constructs a new LoginRequest with the specified login and password.
      *
-     * @param login    the user's login or username
+     * @param login the user's login or username
      * @param password the user's password
      */
     public LoginRequest(String login, String password) {
