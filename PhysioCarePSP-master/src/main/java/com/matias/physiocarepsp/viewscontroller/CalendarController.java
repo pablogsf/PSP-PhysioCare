@@ -24,47 +24,72 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the calendar view in the application.
+ * Handles loading appointments and navigation between views.
+ */
 public class CalendarController implements Initializable {
 
-    @FXML private CalendarView calendarView;
-    @FXML private Button onBackButtonClick;
+    /**
+     * Calendar view that displays the appointments.
+     */
+    @FXML
+    private CalendarView calendarView;
 
-    private final Calendar citasCalendar = new Calendar("Citas");
+    /**
+     * Button to return to the main view.
+     */
+    @FXML
+    private Button onBackButtonClick;
+
+    /**
+     * Calendar containing the user's appointments.
+     */
+    private final Calendar citasCalendar = new Calendar("Appointments");
+
+    /**
+     * Gson object for JSON serialization and deserialization.
+     */
     private final Gson gson = new GsonBuilder().create();
 
+    /**
+     * Initializes the controller and sets up the calendar view.
+     *
+     * @param location URL of the resource location.
+     * @param resources Resources used for initialization.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        CalendarSource source = new CalendarSource("Mis Citas");
+        CalendarSource source = new CalendarSource("My Appointments");
         source.getCalendars().add(citasCalendar);
         calendarView.getCalendarSources().add(source);
         calendarView.setShowAddCalendarButton(false);
         citasCalendar.setStyle(Calendar.Style.STYLE1);
-
         loadAppointments();
     }
 
+    /**
+     * Loads the user's appointments from the server and displays them in the calendar.
+     */
     private void loadAppointments() {
         String physioId = ServiceUtils.getUserId();
         if (physioId == null) {
-            Utils.showAlert("Error", "No hay usuario logueado.", 2);
+            Utils.showAlert("Error", "No logged-in user.", 2);
             return;
         }
 
-        String url = ServiceUtils.SERVER
-                + "/records/physio/" + physioId + "/appointments";
+        String url = ServiceUtils.SERVER + "/records/physio/" + physioId + "/appointments";
 
         ServiceUtils.getResponseAsync(url, null, "GET")
-                // 1) Deserializamos en el DTO de lista
                 .thenApply(json -> gson.fromJson(json, AppointmentListDto.class))
                 .thenAccept(dto -> {
                     if (!dto.isOk()) {
                         Platform.runLater(() ->
-                                Utils.showAlert("Error", "Error cargando citas.", 2)
+                                Utils.showAlert("Error", "Error loading appointments.", 2)
                         );
                         return;
                     }
 
-                    // 2) Transformamos cada DTO en una Entry del calendario
                     List<Entry<String>> entries = new ArrayList<>();
                     for (AppointmentDto d : dto.getResult()) {
                         Entry<String> entry = new Entry<>(
@@ -79,7 +104,6 @@ public class CalendarController implements Initializable {
                         entries.add(entry);
                     }
 
-                    // 3) Actualizamos la vista en el hilo de UI
                     Platform.runLater(() -> {
                         citasCalendar.clear();
                         entries.forEach(citasCalendar::addEntry);
@@ -88,13 +112,17 @@ public class CalendarController implements Initializable {
                 .exceptionally(ex -> {
                     ex.printStackTrace();
                     Platform.runLater(() ->
-                            Utils.showAlert("Error", "No se pudieron cargar las citas", 2)
+                            Utils.showAlert("Error", "Could not load appointments", 2)
                     );
                     return null;
                 });
     }
 
-    @FXML
+    /**
+     * Handles the action of the button to return to the main view.
+     *
+     * @param actionEvent Event triggered by the button.
+     */
     public void onBackButtonClick(ActionEvent actionEvent) {
         Node source = (Node) actionEvent.getSource();
         Utils.switchView(source,

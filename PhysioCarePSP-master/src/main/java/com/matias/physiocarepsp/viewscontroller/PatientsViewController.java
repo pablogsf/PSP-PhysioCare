@@ -62,8 +62,7 @@ public class PatientsViewController implements Initializable {
     private Button btnUpdate;
     private ObservableList<Patient> allPatients = FXCollections.observableArrayList();
 
-    private final Gson gson = new Gson().newBuilder()
-            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+    private final Gson gson = new Gson().newBuilder().registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
             .create();
 
     /**
@@ -74,7 +73,6 @@ public class PatientsViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        //recordFindBySurname("López");
         lsPatients.getSelectionModel().selectedItemProperty().addListener(
                 new ChangeListener<Patient>() {
                     @Override
@@ -89,11 +87,13 @@ public class PatientsViewController implements Initializable {
         txtSearch.textProperty().addListener((observable, oldValue, newValue) -> filterPatients(newValue));
 
         getPatients();
-//        patientFindById("67fbc4b936ea1c9c2d1175b9");
-//        recordFindById("67fbc4b936ea1c9c2d1175cd");
-
     }
 
+    /**
+     * Fetches a record by its ID and displays it in the UI.
+     *
+     * @param id the ID of the record to fetch
+     */
     private void patientFindById(String id) {
         String url = ServiceUtils.SERVER + "/patients/" + id;
         System.out.println("Requesting URL: " + url);
@@ -116,6 +116,11 @@ public class PatientsViewController implements Initializable {
                 });
     }
 
+    /**
+     * Fetches a record by its ID from the server.
+     *
+     * @param id the ID of the record to fetch
+     */
     private void recordFindById(String id) {
         String url = ServiceUtils.SERVER + "/records/" + id;
         System.out.println("Requesting URL: " + url);
@@ -138,8 +143,6 @@ public class PatientsViewController implements Initializable {
                 });
     }
 
-
-
     /**
      * Filters the list of patients based on the search text entered by the user.
      *
@@ -159,6 +162,11 @@ public class PatientsViewController implements Initializable {
         }
     }
 
+    /**
+     * Fetches records based on the surname entered the search field.
+     *
+     * @param surname the surname to search for
+     */
     private void recordFindBySurname(String surname) {
         String encodedSurname = URLEncoder.encode(surname, StandardCharsets.UTF_8);
         String url = ServiceUtils.SERVER + "/records/find?surname=" + encodedSurname;
