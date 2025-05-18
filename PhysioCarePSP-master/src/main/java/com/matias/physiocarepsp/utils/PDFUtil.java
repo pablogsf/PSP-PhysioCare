@@ -1,15 +1,20 @@
 package com.matias.physiocarepsp.utils;
 
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Cell;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import com.itextpdf.layout.properties.VerticalAlignment;
 import com.matias.physiocarepsp.models.Appointment.Appointment;
 import com.matias.physiocarepsp.models.Appointment.AppointmentDto;
 
 import java.io.ByteArrayOutputStream;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -119,27 +124,27 @@ public class PDFUtil {
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
 
-            float[] columnWidths = {2, 2, 3, 5, 5, 5, 2};
+            float[] columnWidths = {1.5f, 1.5f, 2.5f, 5f, 5f, 5f, 1.5f};
             Table table = new Table(UnitValue.createPercentArray(columnWidths));
             table.setWidth(UnitValue.createPercentValue(100));
 
             // Encabezados
-            table.addCell("ID");
-            table.addCell("Physio");
-            table.addCell("Fecha");
-            table.addCell("Diagnóstico");
-            table.addCell("Tratamiento");
-            table.addCell("Observaciones");
-            table.addCell("Precio (€)");
+            table.addCell(createHeaderCell( "ID"));
+            table.addCell(createHeaderCell( "Physio"));
+            table.addCell(createHeaderCell("Fecha"));
+            table.addCell(createHeaderCell("Diagnóstico"));
+            table.addCell(createHeaderCell("Tratamiento"));
+            table.addCell(createHeaderCell("Observaciones"));
+            table.addCell(createHeaderCell("Precio (€)"));
 
             for (AppointmentDto appt : appointments) {
-                table.addCell(safeString(appt.getAppointmentId()));
-                table.addCell(safeString(appt.getPhysioId()));
-                table.addCell(safeString(appt.getDate()));
-                table.addCell(safeString(appt.getDiagnosis()));
-                table.addCell(safeString(appt.getTreatment()));
-                table.addCell(safeString(appt.getObservations()));
-                table.addCell(String.valueOf(appt.getPrice()));
+                table.addCell(createWrappedCell(truncateId(safeString(appt.getAppointmentId()))));
+                table.addCell(createWrappedCell(truncateId(safeString(appt.getPhysioId()))));
+                table.addCell(createWrappedCell(safeString(formatIsoDate(appt.getDate()))));
+                table.addCell(createWrappedCell(safeString(appt.getDiagnosis())));
+                table.addCell(createWrappedCell(safeString(appt.getTreatment())));
+                table.addCell(createWrappedCell(safeString(appt.getObservations())));
+                table.addCell(createWrappedCell(String.valueOf(appt.getPrice())));
             }
 
             document.add(table);
@@ -155,5 +160,38 @@ public class PDFUtil {
 
     private static String safeString(Object obj) {
         return obj == null ? "" : obj.toString();
+    }
+
+    private static Cell createHeaderCell(String content) {
+        return new Cell()
+                .add(new Paragraph(content).setBold())
+                .setBackgroundColor(ColorConstants.LIGHT_GRAY)
+                .setTextAlignment(TextAlignment.CENTER)
+                .setPadding(5);
+    }
+
+    private static Cell createWrappedCell(String content) {
+        return new Cell()
+                .add(new Paragraph(content != null ? content : "")
+                .setFontSize(9)
+                .setMultipliedLeading(1.2f))
+                .setTextAlignment(TextAlignment.LEFT)
+                .setVerticalAlignment(VerticalAlignment.TOP)
+                .setPadding(4)
+                .setKeepTogether(true);
+    }
+
+    private static String truncateId(String id) {
+        return (id != null && id.length() > 8) ? id.substring(0, 8) + "..." : id;
+    }
+
+    private static String formatIsoDate(String isoDateString) {
+        try {
+            ZonedDateTime zdt = ZonedDateTime.parse(isoDateString);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy - HH:mm");
+            return zdt.format(formatter);
+        } catch (Exception e) {
+            return isoDateString;
+        }
     }
 }

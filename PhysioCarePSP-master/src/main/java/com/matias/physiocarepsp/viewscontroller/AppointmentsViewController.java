@@ -1,6 +1,8 @@
 package com.matias.physiocarepsp.viewscontroller;
 
+import com.google.api.services.gmail.Gmail;
 import com.google.gson.Gson;
+import com.itextpdf.kernel.pdf.PdfDocument;
 import com.matias.physiocarepsp.models.Appointment.Appointment;
 import com.matias.physiocarepsp.models.Appointment.AppointmentDto;
 import com.matias.physiocarepsp.models.Appointment.AppointmentListDto;
@@ -9,8 +11,12 @@ import com.matias.physiocarepsp.models.Patient.Patient;
 import com.matias.physiocarepsp.models.Patient.PatientListResponse;
 import com.matias.physiocarepsp.models.Physio.Physio;
 import com.matias.physiocarepsp.models.Physio.PhysioListResponse;
+import com.matias.physiocarepsp.utils.EmailUtil;
+import com.matias.physiocarepsp.utils.PDFUtil;
 import com.matias.physiocarepsp.utils.ServiceUtils;
 import com.matias.physiocarepsp.utils.Utils;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,6 +27,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -168,35 +175,54 @@ public class AppointmentsViewController {
 
     @FXML
     public void onAddAppointment() {
-        try {
-            LocalDate date = dpDate.getValue();
-            // Instant en UTC sin nanos
-            String isoDateTime = date
-                    .atTime(LocalTime.now())
-                    .atOffset(ZoneOffset.UTC)
-                    .truncatedTo(ChronoUnit.SECONDS)
-                    .toString();
-
-            Map<String, Object> payload = new HashMap<>();
-
-            payload.put("patient",      cbPatient.getValue().getId());
-            payload.put("physio",       ServiceUtils.getUserId());
-            payload.put("date",         isoDateTime);
-            payload.put("treatment",    txtTreatment.getText());
-            payload.put("diagnosis",    txtDiagnosis.getText() == null ? "por determinar en cita" : txtDiagnosis.getText());
-            payload.put("observations", txtObservation.getText() == null ? "por determinar en cita" : txtObservation.getText());
-            payload.put("price",        Double.parseDouble(txtPrice.getText()));
-
-            String body = gson.toJson(payload);
-
-            insertAppointment(body);
-
-        } catch (NumberFormatException e) {
-            showAlert("Error", "Precio inválido", 2);
+        boolean isValid = true;
+        boolean disabled = true;
+        if(!txtDiagnosis.isDisable()){
+            if(txtDiagnosis.getText().isEmpty() || txtDiagnosis.getText().isEmpty()){
+                disabled = false;
+            }
         }
 
-        createPdf();
+        if(txtTreatment.getText().isEmpty() ||
+                txtPrice.getText().isEmpty() ||
+                cbPatient.getValue() == null ||
+                cbPhysio.getValue() == null ||
+                dpDate.getValue() == null){
+            isValid = false;
+        }
 
+        if(isValid && disabled) {
+
+            try {
+                LocalDate date = dpDate.getValue();
+                // Instant en UTC sin nanos
+                String isoDateTime = date
+                        .atTime(LocalTime.now())
+                        .atOffset(ZoneOffset.UTC)
+                        .truncatedTo(ChronoUnit.SECONDS)
+                        .toString();
+
+                Map<String, Object> payload = new HashMap<>();
+                payload.put("patient", cbPatient.getValue().getId());
+                payload.put("physio", ServiceUtils.getUserId());
+                payload.put("date", isoDateTime);
+                payload.put("treatment", txtTreatment.getText());
+                payload.put("diagnosis", txtDiagnosis.getText().isEmpty() ? "por determinar en cita" : txtDiagnosis.getText());
+                payload.put("observations", txtObservation.getText().isEmpty() ? "por determinar en cita" : txtObservation.getText());
+                payload.put("price", Double.parseDouble(txtPrice.getText()));
+
+                String body = gson.toJson(payload);
+
+                insertAppointment(body);
+
+            } catch (NumberFormatException e) {
+                showAlert("Error", "Precio inválido", 2);
+            }
+
+            createPdf();
+        }else{
+            showAlert("Error", "Rellene todos los campos", 2);
+        }
     }
 
     private void insertAppointment(String body) {
@@ -205,15 +231,16 @@ public class AppointmentsViewController {
                         body,
                         "POST"
                 )
-                .thenApply(json -> gson.fromJson(json, AppointmentResponse.class))
+                .thenApply(json -> gson.fromJson(json, AppointmentDto.class))
                 .thenAccept(resp -> {
-                    if (!resp.isError()) {
-                        Platform.runLater(() -> appointments.add(resp.getAppointment()));
+                    if (Boolean.parseBoolean(resp.getId())) {
+                        //Platform.runLater(() -> appointments.add(resp.getAppointment()));
+                        System.out.println("Appointment created: " + resp.getId());
                     } else {
-                        Platform.runLater(() ->
+                        /*Platform.runLater(() ->
                                 showAlert("Error", resp.getErrorMessage(), 2)
 
-                        );
+                        );*/
                     }
                 })
                 .exceptionally(ex -> {
